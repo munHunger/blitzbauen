@@ -1,0 +1,12 @@
+{
+    "steps": [
+        {
+            "name": "install dependencies",
+            "script": "npm install"
+        },
+        {
+            "name": "list",
+            "script": "npm run lint"
+        }
+    ]
+}

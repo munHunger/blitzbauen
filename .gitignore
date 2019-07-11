@@ -1,3 +1,6 @@
+data/
+repos/
+
 # Logs
 logs
 *.log
