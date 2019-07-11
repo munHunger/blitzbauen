@@ -5,8 +5,12 @@
             "script": "npm install"
         },
         {
-            "name": "list",
+            "name": "lint",
             "script": "npm run lint"
+        },
+        {
+            "name": "test",
+            "script": "npm run test"
         }
     ]
 }

@@ -8,7 +8,7 @@
     "test": "nyc --reporter=lcov --reporter=text jasmine",
     "coverage": "nyc check-coverage --lines 95 --functions 100 --branches 95",
     "lint": "eslint .",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon --ignore './repos' src/server.js"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
