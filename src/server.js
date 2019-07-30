@@ -22,7 +22,11 @@ var deleteFolderRecursive = function(path) {
 function build(blitz) {
   let steps = blitz.steps.reduce((acc, val) => {
     if (!acc) return val;
-    acc.next = val;
+
+    current = acc;
+    while (current.next) current = current.next;
+
+    current.next = val;
     return acc;
   });
   console.log(steps);
