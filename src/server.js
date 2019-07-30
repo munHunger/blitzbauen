@@ -89,7 +89,7 @@ function executeSteps(step, history, completeCallback) {
   ) {
     h.output = stdout;
     console.log(stdout);
-    if (!stderr || stderr.length == 0) h.status = 0;
+    if (!error || error.length == 0) h.status = 0;
     else h.status = -1;
     console.log(chalk.red(stderr));
     h.time = new Date().getTime() - start;

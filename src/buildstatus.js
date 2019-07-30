@@ -5,9 +5,9 @@
  * @enum {buildStatus}
  */
 var buildStatus = {
-    ABORTED = -2,
-    FAILURE = -1,
-    SUCCESS = 0,
-    SKIP = 1,
-    WARNING = 2
+    ABORTED: -2,
+    FAILURE: -1,
+    SUCCESS: 0,
+    SKIP: 1,
+    WARNING: 2
 }
