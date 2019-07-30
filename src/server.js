@@ -7,6 +7,7 @@ const chalk = require("chalk");
 /**
  * Recursively delete everything in the path, including the path
  * @param {string} path the url to delete
+ * @returns {void}
  */
 function deleteFolderRecursive(path) {
   if (fs.existsSync(path)) {
@@ -27,6 +28,7 @@ function deleteFolderRecursive(path) {
 /**
  * starts a build job.
  * @param {*} blitz a blitz configuration
+ * @returns {void}
  */
 function build(blitz) {
   let steps = blitz.steps.reduce((acc, val) => {
@@ -45,6 +47,7 @@ function build(blitz) {
 /**
  * Executes a step in the build process
  * @param {*} step the step to execute
+ * @returns {void}
  */
 function executeSteps(step) {
   console.log("running " + chalk.cyan(step.name));
