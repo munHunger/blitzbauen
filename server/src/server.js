@@ -48,6 +48,7 @@ function build(blitz, name) {
     current.next = val;
     return acc;
   });
+  console.log("Steps parsed");
   executeSteps(steps, [], details => {
     history.details = details;
     history.status = details.reduce(
@@ -55,9 +56,20 @@ function build(blitz, name) {
       0
     );
     if (!fs.existsSync("history")) fs.mkdirSync("history");
-    fs.writeFile(`history/${name}.json`, JSON.stringify(history), err =>
-      console.log(err)
-    );
+    fs.promises
+      .readFile(`history/${name}.json`)
+      .then(data => {
+        fs.writeFile(
+          `history/${name}.json`,
+          JSON.stringify(JSON.parse(data).concat([history])),
+          err => console.error(err)
+        );
+      })
+      .catch(err => {
+        fs.writeFile(`history/${name}.json`, JSON.stringify([history]), err =>
+          console.log(err)
+        );
+      });
   });
 }
 
