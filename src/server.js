@@ -51,7 +51,7 @@ function build(blitz, name) {
   executeSteps(steps, [], details => {
     history.details = details;
     history.status = details.reduce(
-      (acc, val) => (acc = val == 0 && acc == 0 ? 0 : -1),
+      (acc, val) => (val.status == 0 && acc == 0 ? 0 : -1),
       0
     );
     if (!fs.existsSync("history")) fs.mkdirSync("history");
