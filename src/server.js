@@ -3,7 +3,12 @@ const simplegit = require("simple-git")();
 const fs = require("fs");
 const exec = require("child_process").exec;
 const chalk = require("chalk");
-var deleteFolderRecursive = function(path) {
+
+/**
+ * Recursively delete everything in the path, including the path
+ * @param {string} path the url to delete
+ */
+function deleteFolderRecursive(path) {
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach(function(file, index) {
       var curPath = path + "/" + file;
@@ -17,8 +22,12 @@ var deleteFolderRecursive = function(path) {
     });
     fs.rmdirSync(path);
   }
-};
+}
 
+/**
+ * starts a build job.
+ * @param {*} blitz a blitz configuration
+ */
 function build(blitz) {
   let steps = blitz.steps.reduce((acc, val) => {
     if (!acc) return val;
@@ -33,6 +42,10 @@ function build(blitz) {
   executeSteps(steps);
 }
 
+/**
+ * Executes a step in the build process
+ * @param {*} step the step to execute
+ */
 function executeSteps(step) {
   console.log("running " + chalk.cyan(step.name));
   exec(step.script, { cwd: "repos/blitzbauen" }, function callback(
