@@ -10,4 +10,4 @@ var buildStatus = {
     SUCCESS: 0,
     SKIP: 1,
     WARNING: 2
-}
+};
