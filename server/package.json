@@ -28,6 +28,7 @@
     "simple-git": "^1.120.0",
     "express-graphql": "^0.8.0",
     "graphql": "^14.2.1",
-    "cors": "2.8.5"
+    "cors": "2.8.5",
+    "dateformat": "3.0.3"
   }
 }

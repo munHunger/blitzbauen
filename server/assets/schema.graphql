@@ -1,9 +1,14 @@
 type Query {
-  history: [History]
+  history(page: Int, pageSize: Int, sort: Sort): [History]
+}
+
+input Sort {
+  field: String
+  asc: Boolean
 }
 
 type History {
-  timestamp: Int
+  timestamp(format: String): String
   name: String
   status: Int
   details: [HistoryDetails]

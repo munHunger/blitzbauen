@@ -6,7 +6,7 @@ export const client = new ApolloClient({
 
 export const HISTORY = gql`
 query{
-  history{
+  history(pageSize: 4) {
     name
    	status
   }

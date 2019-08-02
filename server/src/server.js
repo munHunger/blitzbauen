@@ -5,9 +5,11 @@ const exec = require("child_process").exec;
 const chalk = require("chalk");
 
 var express = require("express");
-const cors = require('cors')
+const cors = require("cors");
 var graphqlHTTP = require("express-graphql");
 var { buildSchema } = require("graphql");
+
+const { historyTransformer } = require("./transformer");
 
 /**
  * Recursively delete everything in the path, including the path
@@ -146,7 +148,17 @@ octokit.repos
 const resolver = (req, param) => {
   return {
     history: async input => {
-      return fs.promises.readFile('./history/blitz.json', 'utf8').then(data => JSON.parse(data))
+      let size = input.pageSize || 3;
+      let start = (input.page || 0) * size;
+      let end = start + size;
+      let sortField = (input.sort || {}).field || 'timestamp';
+      console.log(input);
+      return fs.promises.readFile("./history/blitz.json", "utf8").then(data =>
+        JSON.parse(data)
+          .slice(start, end)
+          .map(job => historyTransformer(job))
+          .sort((a,b) => a[sortField] > b[sortField] ? 1 : a[sortField] < b[sortField] ? -1 : 0)
+      );
     }
   };
 };
