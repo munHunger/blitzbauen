@@ -4,6 +4,10 @@ const fs = require("fs");
 const exec = require("child_process").exec;
 const chalk = require("chalk");
 
+var express = require("express");
+var graphqlHTTP = require("express-graphql");
+var { buildSchema } = require("graphql");
+
 /**
  * Recursively delete everything in the path, including the path
  * @param {string} path the url to delete
@@ -137,3 +141,34 @@ octokit.repos
         });
       });
   });
+
+const resolver = (req, param) => {
+  return {
+    history: async input => {
+      return fs.promises.readFile('./history/blitz.json', 'utf8').then(data => JSON.parse(data))
+    }
+  };
+};
+
+startServer(5001);
+function startServer(port) {
+  const app = express();
+  app.use(
+    "/graphql",
+    graphqlHTTP(async (req, res, graphQLParams) => ({
+      schema: loadSchema(),
+      rootValue: await resolver(req, graphQLParams),
+      graphiql: true
+    }))
+  );
+  server = app.listen(port);
+  console.log(`Blitz server up and running on localhost:${port}/graphql`);
+}
+
+function stopServer() {
+  server.close();
+}
+
+function loadSchema() {
+  return buildSchema(fs.readFileSync("assets/schema.graphql", "utf8"));
+}

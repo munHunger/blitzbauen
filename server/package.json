@@ -25,6 +25,8 @@
     "express": "^4.16.4",
     "chalk": "^2.4.2",
     "@octokit/rest": "^16.28.3",
-    "simple-git": "^1.120.0"
+    "simple-git": "^1.120.0",
+    "express-graphql": "^0.8.0",
+    "graphql": "^14.2.1"
   }
 }

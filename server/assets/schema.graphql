@@ -1,0 +1,17 @@
+type Query {
+  history: [History]
+}
+
+type History {
+  timestamp: Int
+  name: String
+  status: Int
+  details: [HistoryDetails]
+}
+
+type HistoryDetails {
+    step: String
+    output: String
+    status: Int
+    time: Int
+}
