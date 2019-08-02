@@ -9,11 +9,6 @@ query{
   history{
     name
    	status
-    details {
-      step
-      status
-      time
-    }
   }
 }
 `;

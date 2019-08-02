@@ -7,18 +7,18 @@
 </style>
 <script>
 	import Thumb from './Thumb.svelte';
-    import { getClient, query } from 'svelte-apollo'; 
+    import { getClient, query } from 'svelte-apollo';
+    import { client, HISTORY } from '../data';
 
-    import { client, HISTORY } from '../data'
-    const builds = query(clientInformation, { query: HISTORY })
+    const builds = query(client, { query: HISTORY })
 </script>
 
 <div class="builds">
     {#await $builds}
         Loading...
     {:then result}
-        {#each result.data as job}
-            <Thumb />
+        {#each result.data.history as job}
+            <Thumb name={job.name} status={job.status}/>
         {/each}
     {/await}
 </div>

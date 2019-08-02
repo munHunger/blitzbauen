@@ -11,7 +11,9 @@
     "rollup-plugin-terser": "^4.0.4",
     "svelte": "^3.0.0",
     "svelte-apollo": "0.3.0",
-    "apollo-boost": "0.4.3"
+    "apollo-client": "^2.6.3",
+    "apollo-boost": "0.4.3",
+    "graphql": "^14.4.2"
   },
   "dependencies": {
     "sirv-cli": "^0.4.4"

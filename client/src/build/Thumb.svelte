@@ -20,13 +20,14 @@
 	}
 </style>
 <script>
-	let name = 'Blitz';
+	export let status;
+	export let name;
 	let time = '2019-07-30 10:19';
-	let status = 'rgb(0, 200, 0)';
+	let style = status == 0 ? 'rgb(0, 200, 0)' : 'rgb(200, 0, 0)';
 </script>
 
 <div class="build">
-	<div class="status" style="background-color: {status}"></div>
+	<div class="status" style="background-color: {style}"></div>
 	<div class="title">{name}</div>
 	<div class="timestamp">{time}</div>
 </div>

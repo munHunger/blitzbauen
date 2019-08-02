@@ -5,6 +5,7 @@ const exec = require("child_process").exec;
 const chalk = require("chalk");
 
 var express = require("express");
+const cors = require('cors')
 var graphqlHTTP = require("express-graphql");
 var { buildSchema } = require("graphql");
 
@@ -153,6 +154,7 @@ const resolver = (req, param) => {
 startServer(5001);
 function startServer(port) {
   const app = express();
+  app.use(cors());
   app.use(
     "/graphql",
     graphqlHTTP(async (req, res, graphQLParams) => ({
