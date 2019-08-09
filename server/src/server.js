@@ -147,7 +147,11 @@ octokit.repos
       });
   });
 
-const resolver = (req, param) => {
+/**
+ * Resolve the graphql request
+ * @returns {*} the graphql resolver
+ */
+const resolver = () => {
   return {
     history: async input => {
       let size = input.pageSize || 3;
@@ -167,6 +171,11 @@ const resolver = (req, param) => {
 };
 
 startServer(5001);
+/**
+ * Start the server on the given port
+ * @param {Number} port the port to start on
+ * @returns {void}
+ */
 function startServer(port) {
   const app = express();
   app.use(cors());
@@ -182,10 +191,18 @@ function startServer(port) {
   console.log(`Blitz server up and running on localhost:${port}/graphql`);
 }
 
+/**
+ * stop the server
+ * @returns {void}
+ */
 function stopServer() {
   server.close();
 }
 
+/**
+ * Loads the graphql schema
+ * @returns {*} the graphql schema
+ */
 function loadSchema() {
   return buildSchema(fs.readFileSync("assets/schema.graphql", "utf8"));
 }

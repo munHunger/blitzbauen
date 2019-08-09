@@ -27,6 +27,8 @@
     {#await $output}
         Loading...
     {:then result}
-        {result.data.history[0].details[0].output}
+        {#each result.data.history[0].details[0].output.split("\n") as paragraph}
+            <div>{paragraph}</div>
+        {/each}
     {/await}
 </div>

@@ -1,5 +1,10 @@
 var dateFormat = require("dateformat");
 
+/**
+ * Transforms the output into the format specified by the schema
+ * @param {*} job the input data
+ * @returns {*} a literal or a function for transforming a field in the history query
+ */
 const historyTransformer = job => {
   return {
     ...job,

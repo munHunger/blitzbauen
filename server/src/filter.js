@@ -1,3 +1,10 @@
+/**
+ * Filter function.
+ * Note that this will out nested arrays and return true/false for root objects
+ * @param {*} input graphql input
+ * @param {*} job the data to filter
+ * @returns {boolean} true if the element should be included in the new filtered array
+ */
 const filter = (input, job) => {
   if (!input.filter) return true;
   return Object.keys(input.filter)
