@@ -14,7 +14,7 @@
 		font-size: 18px;
 		font-weight: 900;
 	}
-	.timestamp {
+	.subtitle {
 		color: rgba(0,0,0,0.7);
 		font-size: 10px;
 	}
@@ -27,14 +27,16 @@
 	}
 </style>
 <script>
+	export let onClick;
+
 	export let status;
-	export let name;
-	export let time;
+	export let title;
+	export let subtitle;
 	let style = status == 0 ? 'rgb(0, 200, 0)' : 'rgb(200, 0, 0)';
 </script>
 
-<div class="build">
+<div class="build" on:click={onClick}>
 	<div class="status" style="background-color: {style}"></div>
-	<div class="title">{name}</div>
-	<div class="timestamp">{time}</div>
+	<div class="title">{title}</div>
+	<div class="subtitle">{subtitle}</div>
 </div>

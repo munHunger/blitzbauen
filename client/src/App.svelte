@@ -8,8 +8,14 @@
 	import { client } from './data';
 	import { setClient } from 'svelte-apollo';
 	import History from './build/History.svelte';
+	import Steps from './build/Steps.svelte';
 
 	setClient(client);
+
+	let state = {}
 </script>
 
-<History />
+<History onSelect={id => state.id = id}/>
+{#if state.id}
+	<Steps jobId={state.id}/>
+{/if}

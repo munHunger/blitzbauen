@@ -1,5 +1,24 @@
 type Query {
-  history(page: Int, pageSize: Int, sort: Sort): [History]
+  history(page: Int, pageSize: Int, sort: Sort, filter: HistoryFilter): [History]
+}
+
+input HistoryFilter {
+  id: StringFilter
+  name: StringFilter
+  status: NumberFilter
+}
+
+input NumberFilter {
+  eq: Int
+  lt: Int
+  gt: Int
+  in: [Int]
+}
+
+input StringFilter {
+  eq: String
+  contains: String
+  in: [String]
 }
 
 input Sort {
@@ -8,6 +27,7 @@ input Sort {
 }
 
 type History {
+  id: String
   timestamp(format: String): String
   name: String
   status: Int

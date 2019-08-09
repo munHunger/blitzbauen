@@ -10,6 +10,7 @@ var graphqlHTTP = require("express-graphql");
 var { buildSchema } = require("graphql");
 
 const { historyTransformer } = require("./transformer");
+const { historyFilter } = require("./filter");
 
 /**
  * Recursively delete everything in the path, including the path
@@ -44,7 +45,8 @@ function build(blitz, name) {
    */
   let history = {
     timestamp: new Date().getTime(),
-    name: name
+    name: name,
+    id: Math.random().toString(36).substring(8)
   };
   let steps = blitz.steps.reduce((acc, val) => {
     if (!acc) return val;
@@ -156,6 +158,7 @@ const resolver = (req, param) => {
       return fs.promises.readFile("./history/blitz.json", "utf8").then(data =>
         JSON.parse(data)
           .sort((a,b) => (a[sortField] > b[sortField] ? 1 : a[sortField] < b[sortField] ? -1 : 0) * (((input.sort || {}).asc) ? -1 : 1))
+          .filter(job => historyFilter(input, job))
           .slice(start, end)
           .map(job => historyTransformer(job))
       );

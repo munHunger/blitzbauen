@@ -1,5 +1,5 @@
 <style>
-	.builds {
+	.steps {
 		position: relative;
 		box-shadow: 0px 0px 3px black;
 		width: 200px;
@@ -11,17 +11,15 @@
     import { getClient, query } from 'svelte-apollo';
     import { client, HISTORY } from '../data';
 
-    export let onSelect;
-
-    const builds = query(client, { query: HISTORY })
+    const steps = query(client, { query: HISTORY })
 </script>
 
-<div class="builds">
-    {#await $builds}
+<div class="steps">
+    {#await $steps}
         Loading...
     {:then result}
-        {#each result.data.history as job}
-            <StatusItem title={job.name} status={job.status} subtitle={job.timestamp} onClick={onSelect(job.id)}/>
+        {#each result.data as steps}
+            steps
         {/each}
     {/await}
 </div>
