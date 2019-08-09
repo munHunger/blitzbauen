@@ -18,7 +18,7 @@
         Loading...
     {:then result}
         {#each result.data.history as job}
-            <Thumb name={job.name} status={job.status}/>
+            <Thumb name={job.name} status={job.status} time={job.timestamp}/>
         {/each}
     {/await}
 </div>

@@ -155,8 +155,8 @@ const resolver = (req, param) => {
       console.log(input);
       return fs.promises.readFile("./history/blitz.json", "utf8").then(data =>
         JSON.parse(data)
-          .slice(start, end)
           .sort((a,b) => (a[sortField] > b[sortField] ? 1 : a[sortField] < b[sortField] ? -1 : 0) * (((input.sort || {}).asc) ? -1 : 1))
+          .slice(start, end)
           .map(job => historyTransformer(job))
       );
     }

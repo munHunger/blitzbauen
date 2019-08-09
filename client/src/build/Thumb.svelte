@@ -22,7 +22,7 @@
 <script>
 	export let status;
 	export let name;
-	let time = '2019-07-30 10:19';
+	export let time;
 	let style = status == 0 ? 'rgb(0, 200, 0)' : 'rgb(200, 0, 0)';
 </script>
 

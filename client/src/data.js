@@ -6,9 +6,10 @@ export const client = new ApolloClient({
 
 export const HISTORY = gql`
 query{
-  history(pageSize: 4) {
+  history(pageSize: 5, sort: {field: "timestamp", asc: true}) {
     name
    	status
+    timestamp(format: "yyyy-mm-dd hh:mm")
   }
 }
 `;
