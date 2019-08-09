@@ -7,9 +7,26 @@ export const client = new ApolloClient({
 export const HISTORY = gql`
 query{
   history(pageSize: 5, sort: {field: "timestamp", asc: true}) {
+    id
     name
    	status
     timestamp(format: "yyyy-mm-dd hh:mm")
+  }
+}
+`;
+
+export const JOBDETAIL = gql`
+query History($id: String!){
+  history (
+  	filter: {
+      id: { eq: $id }
+    }
+  ){
+    details {
+      step
+      status
+      time
+    }
   }
 }
 `;

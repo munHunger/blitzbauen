@@ -1,9 +1,9 @@
 <style>
 	.builds {
 		position: relative;
-		box-shadow: 0px 0px 3px black;
 		width: 200px;
         height: 100%;
+        display: inline-block;
 	}
 </style>
 <script>
@@ -21,7 +21,7 @@
         Loading...
     {:then result}
         {#each result.data.history as job}
-            <StatusItem title={job.name} status={job.status} subtitle={job.timestamp} onClick={onSelect(job.id)}/>
+            <StatusItem title={job.name} status={job.status} subtitle={job.timestamp} onClick={() => onSelect(job.id)}/>
         {/each}
     {/await}
 </div>
