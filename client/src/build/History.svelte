@@ -3,6 +3,7 @@
 		position: relative;
 		box-shadow: 0px 0px 3px black;
 		width: 200px;
+        height: 100%;
 	}
 </style>
 <script>

@@ -2,7 +2,14 @@
 	.build {
 		position: relative;
 		padding: 15px;
+		cursor: pointer;
+		transition: all 0.25s ease-in-out;
 	}
+
+	.build:hover {
+		padding-left: 20px;
+	}
+
 	.title {
 		font-size: 18px;
 		font-weight: 900;

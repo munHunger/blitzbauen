@@ -1,3 +1,8 @@
+<style>
+	:global(body) {
+		padding: 0px;
+	}
+</style>
 <script>
 	import ApolloClient from 'apollo-boost';
 	import { client } from './data';
