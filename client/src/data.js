@@ -30,3 +30,23 @@ query History($id: String!){
   }
 }
 `;
+
+export const STEP_OUTPUT = gql`
+query History($id: String!, $step: String!){
+  history (
+  	filter: {
+      id: { eq: $id }
+      details: {
+        step: { eq: $step }
+      }
+    }
+  ){
+    details {
+      step
+      status
+      time
+      output
+    }
+  }
+}
+`

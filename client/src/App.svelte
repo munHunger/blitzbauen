@@ -9,6 +9,7 @@
 	import { setClient } from 'svelte-apollo';
 	import History from './build/History.svelte';
 	import Steps from './build/Steps.svelte';
+	import Console from './build/Console.svelte';
 
 	setClient(client);
 
@@ -17,5 +18,8 @@
 
 <History onSelect={id => state.id = id}/>
 {#if state.id}
-	<Steps jobId={state.id}/>
+	<Steps jobId={state.id} onSelect={step => state.step = step}/>
+{/if}
+{#if state.step && state.id}
+	<Console jobId={state.id} step={state.step}/>
 {/if}

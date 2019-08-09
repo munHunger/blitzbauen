@@ -6,6 +6,13 @@ input HistoryFilter {
   id: StringFilter
   name: StringFilter
   status: NumberFilter
+  details: HistoryDetailsFilter
+}
+
+input HistoryDetailsFilter {
+  step: StringFilter
+  output: StringFilter
+  status: NumberFilter
 }
 
 input NumberFilter {

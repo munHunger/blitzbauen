@@ -1,4 +1,4 @@
-const historyFilter = (input, job) => {
+const filter = (input, job) => {
   if (!input.filter) return true;
   return Object.keys(input.filter)
     .map(key => {
@@ -10,7 +10,12 @@ const historyFilter = (input, job) => {
             field = field.toUpperCase();
             compVal = compVal.toUpperCase();
           }
-          console.log(`${field} ${comp} ${compVal}`)
+          if (Array.isArray(field)) {
+            job[key] = field.filter(elem =>
+              filter({ filter: input.filter[key] }, elem)
+            );
+            return true;
+          }
           switch (comp) {
             case "eq":
               return field === compVal;
@@ -33,5 +38,5 @@ const historyFilter = (input, job) => {
     .reduce((acc, val) => (acc &= val), true);
 };
 module.exports = {
-  historyFilter
+  filter
 };

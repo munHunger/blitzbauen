@@ -10,9 +10,9 @@
 	import StatusItem from './StatusItem.svelte';
     import { getClient, query } from 'svelte-apollo';
     import { client, JOBDETAIL } from '../data';
-    import { beforeUpdate, afterUpdate } from 'svelte';
 
     export let jobId;
+    export let onSelect;
 
     $: steps = query(client, { query: JOBDETAIL, variables: { id: jobId } })
 </script>
@@ -22,7 +22,7 @@
         Loading...
     {:then result}
         {#each result.data.history[0].details as step}
-            <StatusItem title={step.step} subtitle={step.time} status={step.status}/>
+            <StatusItem title={step.step} subtitle={step.time} status={step.status} onClick={() => onSelect(step.step)}/>
         {/each}
     {/await}
 </div>
