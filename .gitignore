@@ -1,7 +1,7 @@
 data/
 repos/
 history/
-public/
+client/public/bundle.*
 
 # Logs
 logs
