@@ -1,16 +1,16 @@
 {
-    "steps": [
-        {
-            "name": "install dependencies",
-            "script": "npm install"
-        },
-        {
-            "name": "lint",
-            "script": "npm run lint"
-        },
-        {
-            "name": "test",
-            "script": "npm run test"
-        }
-    ]
+  "steps": [
+    {
+      "name": "install dependencies",
+      "script": "cd server && npm install"
+    },
+    {
+      "name": "lint",
+      "script": "cd server && npm run lint"
+    },
+    {
+      "name": "test",
+      "script": "cd server && npm run test"
+    }
+  ]
 }
