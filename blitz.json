@@ -11,6 +11,14 @@
     {
       "name": "test",
       "script": "cd server && npm run test"
+    },
+    {
+      "name": "install dependencies",
+      "script": "cd client && npm install"
+    },
+    {
+      "name": "build",
+      "script": "cd client && npm run build"
     }
   ]
 }
