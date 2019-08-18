@@ -5,7 +5,7 @@
   import History from "./build/History.svelte";
   import Steps from "./build/Steps.svelte";
   import Console from "./build/Console.svelte";
-
+  import Navbar from "./menu/Navbar.svelte";
   setClient(client);
 
   let state = {};
@@ -15,9 +15,13 @@
   :global(body) {
     padding: 0px;
   }
+  .content-wrapper {
+    box-sizing: border-box;
+  }
 </style>
 
-<div class="mui-container-fluid">
+<Navbar />
+<div class="content-wrapper mui-container-fluid" style="margin-left:5rem">
   <div class="mui-row">
     <History onSelect={id => (state.id = id)} />
     {#if state.id}

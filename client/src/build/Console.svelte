@@ -19,6 +19,7 @@
     height: 400px;
     border-radius: 15px;
     padding: 10px;
+    margin: 10px;
     box-shadow: inset 0 0 10px #000;
     display: inline-block;
     background-color: rgb(38, 39, 43);
