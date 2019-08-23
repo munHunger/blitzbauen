@@ -1,3 +1,9 @@
+const { PubSub } = require("graphql-subscriptions");
+
+const pubsub = new PubSub();
+const { createServer } = require("http");
+const { SubscriptionServer } = require("subscriptions-transport-ws");
+
 const octokit = new (require("@octokit/rest"))();
 const simplegit = require("simple-git")();
 const fs = require("fs");
@@ -7,7 +13,7 @@ const chalk = require("chalk");
 var express = require("express");
 const cors = require("cors");
 var graphqlHTTP = require("express-graphql");
-var { buildSchema } = require("graphql");
+var { buildSchema, execute, subscribe } = require("graphql");
 
 const { historyTransformer } = require("./transformer");
 const { filter } = require("./filter");
@@ -154,6 +160,7 @@ octokit.repos
  * @returns {*} the graphql resolver
  */
 const resolver = () => {
+  pubsub.publish("RESOLVER", "RESOLVED");
   return {
     history: async input => {
       let size = input.pageSize || 3;
@@ -215,11 +222,28 @@ function startServer(port) {
     graphqlHTTP(async (req, res, graphQLParams) => ({
       schema: loadSchema(),
       rootValue: await resolver(req, graphQLParams),
-      graphiql: true
+      graphiql: true,
+      subscriptionsEndpoint: `ws://localhost:${3241}/subscriptions`
     }))
   );
   server = app.listen(port);
   console.log(`Blitz server up and running on localhost:${port}/graphql`);
+
+  const ws = createServer(express());
+  ws.listen(3241, () => {
+    console.log(`Library subscription websocket alive on port 3241`);
+    new SubscriptionServer(
+      {
+        execute,
+        subscribe,
+        schema: loadSchema()
+      },
+      {
+        server: ws,
+        path: "/subscriptions"
+      }
+    );
+  });
 }
 
 /**
