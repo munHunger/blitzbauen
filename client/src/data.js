@@ -15,6 +15,17 @@ query{
 }
 `;
 
+export const SETTINGS = gql`
+query{
+  settings {
+    repositories {
+      name
+      url
+    }
+  }
+}
+`;
+
 export const JOBDETAIL = gql`
 query History($id: String!){
   history (

@@ -1,5 +1,12 @@
 type Query {
   history(page: Int, pageSize: Int, sort: Sort, filter: HistoryFilter): [History]
+  settings: Settings
+}
+
+type Mutation {
+  addRepository(repository: RepositoryInput): Settings
+  removeRepository(repository: RepositoryInput): Settings
+  updateRepository(old: RepositoryInput, new: RepositoryInput): Settings
 }
 
 input HistoryFilter {
@@ -42,8 +49,22 @@ type History {
 }
 
 type HistoryDetails {
-    step: String
-    output: String
-    status: Int
-    time: Int
+  step: String
+  output: String
+  status: Int
+  time: Int
+}
+
+type Settings {
+  repositories: [Repository]
+}
+
+type Repository {
+  name: String
+  url: String
+}
+
+input RepositoryInput {
+  name: String
+  url: String
 }

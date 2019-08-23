@@ -46,7 +46,9 @@ function build(blitz, name) {
   let history = {
     timestamp: new Date().getTime(),
     name: name,
-    id: Math.random().toString(36).substring(8)
+    id: Math.random()
+      .toString(36)
+      .substring(8)
   };
   let steps = blitz.steps.reduce((acc, val) => {
     if (!acc) return val;
@@ -157,15 +159,44 @@ const resolver = () => {
       let size = input.pageSize || 3;
       let start = (input.page || 0) * size;
       let end = start + size;
-      let sortField = (input.sort || {}).field || 'timestamp';
+      let sortField = (input.sort || {}).field || "timestamp";
       console.log(input);
       return fs.promises.readFile("./history/blitz.json", "utf8").then(data =>
         JSON.parse(data)
-          .sort((a,b) => (a[sortField] > b[sortField] ? 1 : a[sortField] < b[sortField] ? -1 : 0) * (((input.sort || {}).asc) ? -1 : 1))
+          .sort(
+            (a, b) =>
+              (a[sortField] > b[sortField]
+                ? 1
+                : a[sortField] < b[sortField]
+                ? -1
+                : 0) * ((input.sort || {}).asc ? -1 : 1)
+          )
           .filter(job => filter(input, job))
           .slice(start, end)
           .map(job => historyTransformer(job))
       );
+    },
+    settings: async input => {
+      return fs.promises
+        .readFile("./data/settings.json", "utf8")
+        .then(data => JSON.parse(data));
+    },
+    addRepository: async input => {
+      return fs.promises
+        .readFile("./data/settings.json", "utf8")
+        .then(data => JSON.parse(data))
+        .then(data => {
+          data.repositories.push(input.repository);
+          return data;
+        })
+        .then(data =>
+          fs.promises.writeFile("./data/settings.json", JSON.stringify(data))
+        )
+        .then(
+          fs.promises
+            .readFile("./data/settings.json", "utf8")
+            .then(data => JSON.parse(data))
+        );
     }
   };
 };
