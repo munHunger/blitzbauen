@@ -16,7 +16,8 @@
     "graphql": "^14.4.2"
   },
   "dependencies": {
-    "sirv-cli": "^0.4.4"
+    "sirv-cli": "^0.4.4",
+    "@spaceavocado/svelte-router": "^1.0.12"
   },
   "scripts": {
     "build": "rollup -c",

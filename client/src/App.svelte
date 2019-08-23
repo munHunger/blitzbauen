@@ -1,14 +1,33 @@
 <script>
+  import createRouter from "@spaceavocado/svelte-router";
+  import RouterView from "@spaceavocado/svelte-router/component/view";
+
   import ApolloClient from "apollo-boost";
   import { client } from "./data";
   import { setClient } from "svelte-apollo";
-  import History from "./build/History.svelte";
-  import Steps from "./build/Steps.svelte";
-  import Console from "./build/Console.svelte";
   import Navbar from "./menu/Navbar.svelte";
+  import Settings from "./settings/Settings.svelte";
+  import Build from "./build/Build.svelte";
   setClient(client);
 
-  let state = {};
+  createRouter({
+    routes: [
+      {
+        path: "/settings",
+        name: "settings",
+        component: Settings
+      },
+      {
+        path: "/build",
+        name: "build",
+        component: Build
+      },
+      {
+        path: "*",
+        component: Build
+      }
+    ]
+  });
 </script>
 
 <style>
@@ -22,13 +41,5 @@
 
 <Navbar />
 <div class="content-wrapper mui-container-fluid" style="margin-left:5rem">
-  <div class="mui-row">
-    <History onSelect={id => (state.id = id)} />
-    {#if state.id}
-      <Steps jobId={state.id} onSelect={step => (state.step = step)} />
-    {/if}
-    {#if state.step && state.id}
-      <Console jobId={state.id} step={state.step} />
-    {/if}
-  </div>
+  <RouterView />
 </div>

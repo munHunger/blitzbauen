@@ -1,4 +1,8 @@
 <script>
+  import {router} from '@spaceavocado/svelte-router';
+
+  let routeTo = url => $router.push(url);
+
   export const width = "5rem";
 </script>
 
@@ -17,6 +21,6 @@
 </style>
 
 <div class="bar" style="width:{width}">
-  <img src="git.png" alt="repositories" />
-  <img src="cubes.png" alt="builds" />
+  <img src="/git.png" alt="repositories" on:click={() => routeTo("/settings")} />
+  <img src="/cubes.png" alt="builds" on:click={() => routeTo("/build")} />
 </div>
