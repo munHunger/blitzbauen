@@ -9,20 +9,22 @@ export const client = new ApolloClient({
   networkInterface: wsClient
 });
 
-client.subscribe({
-  query: gql`
-    subscription onNewItem {
-        newItemCreated {
-            id
-        }
-    }`,
-  variables: {}
-}).subscribe({
-  next (data) {
-    console.log(data)
-    // Notify your application with the new arrived data
-  }
-});
+client
+  .subscribe({
+    query: gql`
+      subscription {
+        onNewItem
+      }
+    `,
+    variables: {}
+  })
+  .subscribe({
+    next(data) {
+      console.log("NEXT");
+      console.log(data);
+      // Notify your application with the new arrived data
+    }
+  });
 
 export const HISTORY = gql`
   query {

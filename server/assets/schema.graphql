@@ -1,5 +1,10 @@
 type Query {
-  history(page: Int, pageSize: Int, sort: Sort, filter: HistoryFilter): [History]
+  history(
+    page: Int
+    pageSize: Int
+    sort: Sort
+    filter: HistoryFilter
+  ): [History]
   settings: Settings
 }
 
@@ -7,6 +12,10 @@ type Mutation {
   addRepository(repository: RepositoryInput): Settings
   removeRepository(repository: RepositoryInput): Settings
   updateRepository(old: RepositoryInput, new: RepositoryInput): Settings
+}
+
+type Subscription {
+  onNewItem: String
 }
 
 input HistoryFilter {

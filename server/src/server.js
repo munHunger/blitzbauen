@@ -1,8 +1,10 @@
-const { PubSub } = require("graphql-subscriptions");
+const { PubSub, withFilter } = require("graphql-subscriptions");
 
 const pubsub = new PubSub();
 const { createServer } = require("http");
 const { SubscriptionServer } = require("subscriptions-transport-ws");
+
+const { graphqlExpress, graphiqlExpress } = require("apollo-server-express");
 
 const octokit = new (require("@octokit/rest"))();
 const simplegit = require("simple-git")();
@@ -18,6 +20,9 @@ var { buildSchema, execute, subscribe } = require("graphql");
 const { historyTransformer } = require("./transformer");
 const { filter } = require("./filter");
 
+const resolvers = require("./resolvers");
+
+const { makeExecutableSchema } = require("graphql-tools");
 /**
  * Recursively delete everything in the path, including the path
  * @param {string} path the url to delete
@@ -128,32 +133,32 @@ function executeSteps(step, history, completeCallback) {
   });
 }
 
-octokit.repos
-  .get({
-    owner: "munhunger",
-    repo: "blitzbauen"
-  })
-  .then(({ data }) => {
-    let repo = data;
-    octokit.repos
-      .listCommits({
-        owner: "munhunger",
-        repo: "blitzbauen"
-      })
-      .then(({ data }) => {
-        if (fs.existsSync("repos/blitzbauen"))
-          deleteFolderRecursive("repos/blitzbauen");
-        console.log("cloning repo");
-        simplegit.clone(repo.clone_url, "repos/blitzbauen").exec(() => {
-          console.log("cloned");
-          if (fs.existsSync("repos/blitzbauen/blitz.json"))
-            build(
-              JSON.parse(fs.readFileSync("repos/blitzbauen/blitz.json")),
-              "blitz"
-            );
-        });
-      });
-  });
+// octokit.repos
+//   .get({
+//     owner: "munhunger",
+//     repo: "blitzbauen"
+//   })
+//   .then(({ data }) => {
+//     let repo = data;
+//     octokit.repos
+//       .listCommits({
+//         owner: "munhunger",
+//         repo: "blitzbauen"
+//       })
+//       .then(({ data }) => {
+//         if (fs.existsSync("repos/blitzbauen"))
+//           deleteFolderRecursive("repos/blitzbauen");
+//         console.log("cloning repo");
+//         simplegit.clone(repo.clone_url, "repos/blitzbauen").exec(() => {
+//           console.log("cloned");
+//           if (fs.existsSync("repos/blitzbauen/blitz.json"))
+//             build(
+//               JSON.parse(fs.readFileSync("repos/blitzbauen/blitz.json")),
+//               "blitz"
+//             );
+//         });
+//       });
+//   });
 
 /**
  * Resolve the graphql request
@@ -162,6 +167,16 @@ octokit.repos
 const resolver = () => {
   pubsub.publish("RESOLVER", "RESOLVED");
   return {
+    Subscriptions: {
+      onNewItem: {
+        subscribe: withFilter(
+          () => pubsub.asyncIterator("RESOLVER"),
+          (payload, variables) => {
+            return payload.channelId === variables.channelId;
+          }
+        )
+      }
+    },
     history: async input => {
       let size = input.pageSize || 3;
       let start = (input.page || 0) * size;
@@ -216,33 +231,40 @@ startServer(5001);
  */
 function startServer(port) {
   const app = express();
-  app.use(cors());
+  const schema = makeExecutableSchema({
+    typeDefs: fs.readFileSync("assets/schema.graphql", "utf8"),
+    resolvers
+  });
+
   app.use(
     "/graphql",
-    graphqlHTTP(async (req, res, graphQLParams) => ({
-      schema: loadSchema(),
-      rootValue: await resolver(req, graphQLParams),
-      graphiql: true,
-      subscriptionsEndpoint: `ws://localhost:${3241}/subscriptions`
+    graphqlExpress(req => ({
+      schema,
+      context: {
+        user: req.user
+      }
     }))
   );
-  server = app.listen(port);
-  console.log(`Blitz server up and running on localhost:${port}/graphql`);
 
-  const ws = createServer(express());
-  ws.listen(3241, () => {
-    console.log(`Library subscription websocket alive on port 3241`);
-    new SubscriptionServer(
-      {
-        execute,
-        subscribe,
-        schema: loadSchema()
-      },
-      {
-        server: ws,
-        path: "/subscriptions"
-      }
-    );
+  const graphQLServer = createServer(app);
+  graphQLServer.listen(port, err => {
+    if (err) {
+      console.log(err);
+    } else {
+      //Creating subscription server
+      new SubscriptionServer(
+        {
+          schema,
+          execute,
+          subscribe
+        },
+        {
+          server: graphQLServer,
+          path: `ws://localhost:${port}/subscriptions`
+        }
+      );
+      console.log(`Server running on ${port}`);
+    }
   });
 }
 

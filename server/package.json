@@ -32,6 +32,9 @@
     "cors": "2.8.5",
     "dateformat": "3.0.3",
     "graphql-subscriptions": "^1.1.0",
-    "subscriptions-transport-ws": "^0.9.16"
+    "subscriptions-transport-ws": "^0.9.16",
+    "graphql-tools": "4.0.5",
+    "apollo-server-express": "2.9.0",
+    "apollo-boost": "0.4.4"
   }
 }
