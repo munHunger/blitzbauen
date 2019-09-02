@@ -1,4 +1,4 @@
-const addRepository = async input => {
+const addRepository = async (_, input) => {
   return fs.promises
     .readFile("./data/settings.json", "utf8")
     .then(data => JSON.parse(data))

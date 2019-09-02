@@ -12,7 +12,11 @@ const resolvers = {
     addRepository
   },
   Subscription: {
-    onNewItem
+    onNewItem: {
+      onConnect: (connectionParams, webSocket, context) => {
+        console.log("connected?");
+      }
+    }
   }
 };
 module.exports = resolvers;

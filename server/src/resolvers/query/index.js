@@ -1,4 +1,12 @@
-const history = async input => {
+const { historyTransformer } = require("../../transformer");
+const { filter } = require("../../filter");
+const fs = require("fs");
+const { pubsub } = require("../../subscriptions");
+
+const history = async (_, input) => {
+  pubsub.publish("messageAdded", "messageAdded");
+
+  console.log(input);
   let size = input.pageSize || 3;
   let start = (input.page || 0) * size;
   let end = start + size;
