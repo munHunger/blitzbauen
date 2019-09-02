@@ -19,6 +19,8 @@ const { ApolloServer } = require("apollo-server-express");
 
 const { typeDefs } = require("./schema");
 
+const http = require("http");
+
 startServer(5001);
 /**
  * Start the server on the given port
@@ -37,7 +39,10 @@ function startServer(port) {
     app
   });
 
-  app.listen(port, () => {
+  const httpServer = http.createServer(app);
+  server.installSubscriptionHandlers(httpServer);
+
+  httpServer.listen(port, () => {
     console.log(
       `Server ready at http://localhost:${port}${server.graphqlPath}`
     );

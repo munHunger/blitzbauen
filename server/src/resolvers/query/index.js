@@ -1,17 +1,12 @@
 const { historyTransformer } = require("../../transformer");
 const { filter } = require("../../filter");
 const fs = require("fs");
-const { pubsub } = require("../../subscriptions");
 
 const history = async (_, input) => {
-  pubsub.publish("messageAdded", "messageAdded");
-
-  console.log(input);
   let size = input.pageSize || 3;
   let start = (input.page || 0) * size;
   let end = start + size;
   let sortField = (input.sort || {}).field || "timestamp";
-  console.log(input);
   return fs.promises.readFile("./history/blitz.json", "utf8").then(data =>
     JSON.parse(data)
       .sort(

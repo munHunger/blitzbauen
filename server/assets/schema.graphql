@@ -12,10 +12,11 @@ type Mutation {
   addRepository(repository: RepositoryInput): Settings
   removeRepository(repository: RepositoryInput): Settings
   updateRepository(old: RepositoryInput, new: RepositoryInput): Settings
+  triggerBuild(name: String): Boolean
 }
 
 type Subscription {
-  onNewItem: History
+  onJobComplete: History
 }
 
 input HistoryFilter {

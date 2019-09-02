@@ -1,3 +1,11 @@
+const octokit = new (require("@octokit/rest"))();
+const simplegit = require("simple-git")();
+const fs = require("fs");
+const exec = require("child_process").exec;
+const chalk = require("chalk");
+
+const { pubsub } = require("../subscriptions");
+
 /**
  * Recursively delete everything in the path, including the path
  * @param {string} path the url to delete
@@ -62,6 +70,10 @@ function build(blitz, name) {
           err => console.error(err)
         );
       })
+      .then(_ => {
+        console.log(history);
+        pubsub.publish("onJobComplete", "asdasdasd");
+      })
       .catch(err => {
         fs.writeFile(`history/${name}.json`, JSON.stringify([history]), err =>
           console.log(err)
@@ -108,29 +120,33 @@ function executeSteps(step, history, completeCallback) {
   });
 }
 
-// octokit.repos
-//   .get({
-//     owner: "munhunger",
-//     repo: "blitzbauen"
-//   })
-//   .then(({ data }) => {
-//     let repo = data;
-//     octokit.repos
-//       .listCommits({
-//         owner: "munhunger",
-//         repo: "blitzbauen"
-//       })
-//       .then(({ data }) => {
-//         if (fs.existsSync("repos/blitzbauen"))
-//           deleteFolderRecursive("repos/blitzbauen");
-//         console.log("cloning repo");
-//         simplegit.clone(repo.clone_url, "repos/blitzbauen").exec(() => {
-//           console.log("cloned");
-//           if (fs.existsSync("repos/blitzbauen/blitz.json"))
-//             build(
-//               JSON.parse(fs.readFileSync("repos/blitzbauen/blitz.json")),
-//               "blitz"
-//             );
-//         });
-//       });
-//   });
+function buildRepo() {
+  return octokit.repos
+    .get({
+      owner: "munhunger",
+      repo: "blitzbauen"
+    })
+    .then(({ data }) => {
+      let repo = data;
+      octokit.repos
+        .listCommits({
+          owner: "munhunger",
+          repo: "blitzbauen"
+        })
+        .then(({ data }) => {
+          if (fs.existsSync("repos/blitzbauen"))
+            deleteFolderRecursive("repos/blitzbauen");
+          console.log("cloning repo");
+          simplegit.clone(repo.clone_url, "repos/blitzbauen").exec(() => {
+            console.log("cloned");
+            if (fs.existsSync("repos/blitzbauen/blitz.json"))
+              build(
+                JSON.parse(fs.readFileSync("repos/blitzbauen/blitz.json")),
+                "blitz"
+              );
+          });
+        });
+    });
+}
+
+module.exports = { buildRepo };

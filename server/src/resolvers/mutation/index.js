@@ -1,3 +1,5 @@
+const builder = require("../../builder");
+
 const addRepository = async (_, input) => {
   return fs.promises
     .readFile("./data/settings.json", "utf8")
@@ -15,4 +17,8 @@ const addRepository = async (_, input) => {
         .then(data => JSON.parse(data))
     );
 };
-module.exports = { addRepository };
+
+const triggerBuild = async (_, input) => {
+  return builder.buildRepo().then(_ => true);
+};
+module.exports = { addRepository, triggerBuild };

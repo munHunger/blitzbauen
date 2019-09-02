@@ -1,22 +1,17 @@
-const { history, settings } = require("./query");
+const queries = require("./query");
 
-const { addRepository } = require("./mutation");
-const { onNewItem } = require("./subscription");
+const mutations = require("./mutation");
+const subscriptions = require("./subscription");
 
 const resolvers = {
   Query: {
-    history,
-    settings
+    ...queries
   },
   Mutation: {
-    addRepository
+    ...mutations
   },
   Subscription: {
-    onNewItem: {
-      onConnect: (connectionParams, webSocket, context) => {
-        console.log("connected?");
-      }
-    }
+    ...subscriptions
   }
 };
 module.exports = resolvers;
