@@ -1,17 +1,3 @@
-const { PubSub, withFilter } = require("graphql-subscriptions");
-
-const pubsub = new PubSub();
-const { createServer } = require("http");
-const { SubscriptionServer } = require("subscriptions-transport-ws");
-
-const { graphqlExpress, graphiqlExpress } = require("apollo-server-express");
-
-const octokit = new (require("@octokit/rest"))();
-const simplegit = require("simple-git")();
-const fs = require("fs");
-const exec = require("child_process").exec;
-const chalk = require("chalk");
-
 var express = require("express");
 
 const resolvers = require("./resolvers");
