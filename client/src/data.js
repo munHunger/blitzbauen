@@ -1,30 +1,33 @@
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import ApolloClient, { gql } from "apollo-boost";
+import { WebSocketLink } from "apollo-link-ws";
 
-const wsClient = new SubscriptionClient("ws://localhost:3241/subscriptions", {
+const wsClient = new SubscriptionClient("ws://localhost:5001/graphql", {
   reconnect: true
 });
 
-export const client = new ApolloClient({
-  networkInterface: wsClient
-});
+export const client = new WebSocketLink(wsClient);
 
-client
-  .subscribe({
-    query: gql`
-      subscription {
-        onNewItem
-      }
-    `,
-    variables: {}
-  })
-  .subscribe({
-    next(data) {
-      console.log("NEXT");
-      console.log(data);
-      // Notify your application with the new arrived data
-    }
-  });
+// export const client = new ApolloClient({
+//   networkInterface: wsClient,
+// });
+
+// client
+//   .subscribe({
+//     query: gql`
+//       subscription {
+//         onNewItem
+//       }
+//     `,
+//     variables: {}
+//   })
+//   .subscribe({
+//     next(data) {
+//       console.log("NEXT");
+//       console.log(data);
+//       // Notify your application with the new arrived data
+//     }
+//   });
 
 export const HISTORY = gql`
   query {

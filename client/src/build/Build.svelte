@@ -7,7 +7,7 @@
 
 <History onSelect={id => (state.id = id)} />
 {#if state.id}
-  <Steps jobId={state.id} onSelect={step => (state.step = step)} />
+  <!-- <Steps jobId={state.id} onSelect={step => (state.step = step)} /> -->
 {/if}
 {#if state.step && state.id}
   <Console jobId={state.id} step={state.step} />

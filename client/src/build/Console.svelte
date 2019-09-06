@@ -6,7 +6,7 @@
   export let jobId;
   export let step;
 
-  $: output = query(client, {
+  $: output = client.request({
     query: STEP_OUTPUT,
     variables: { id: jobId, step: step }
   });
@@ -15,12 +15,8 @@
 <style>
   .console {
     position: relative;
-    width: 800px;
-    height: 400px;
-    border-radius: 15px;
     padding: 10px;
-    margin: 10px;
-    box-shadow: inset 0 0 10px #000;
+    margin: 0px;
     display: inline-block;
     background-color: rgb(38, 39, 43);
     color: rgb(33, 214, 88);
@@ -31,12 +27,14 @@
 <link
   href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap"
   rel="stylesheet" />
-<div class="console mui-col-md-6">
+<div class="console">
   {#await $output}
     Loading...
   {:then result}
-    {#each result.data.history[0].details[0].output.split('\n') as paragraph}
-      <div>{paragraph}</div>
-    {/each}
+    {#if result}
+      {#each result.data.history[0].details[0].output.split('\n') as paragraph}
+        <div>{paragraph}</div>
+      {/each}
+    {/if}
   {/await}
 </div>

@@ -1,32 +1,55 @@
 <script>
+  import Steps from "./Steps.svelte";
+
   import StatusItem from "./StatusItem.svelte";
   import { getClient, query } from "svelte-apollo";
   import { client, HISTORY } from "../data";
 
+  let id;
   export let onSelect;
 
-  const builds = query(client, { query: HISTORY });
+  const builds = client.request({ query: HISTORY });
 </script>
 
 <style>
-  .builds {
+  .build {
     position: relative;
-    width: 200px;
     height: 100%;
-    display: inline-block;
+    display: flex;
+    background-color: rgb(250, 250, 250);
+  }
+
+  .steps {
+    background-color: rgb(247, 247, 247);
   }
 </style>
 
-<div class="builds mui-col-md-1">
-  {#await $builds}
-    Loading...
-  {:then result}
+{#await $builds}
+  Loading...
+{:then result}
+  {#if result}
     {#each result.data.history as job}
-      <StatusItem
-        title={job.name}
-        status={job.status}
-        subtitle={job.timestamp}
-        onClick={() => onSelect(job.id)} />
+      <div class="mui-container-fluid">
+        <div class="mui-row">
+          <div class="build mui-col-md-12">
+            <div class="mui-col-md-2">
+              <StatusItem
+                title={job.name}
+                status={job.status}
+                subtitle={job.timestamp}
+                onClick={() => {
+                  id = job.id;
+                  if (onSelect) onSelect(job.id);
+                }} />
+            </div>
+            <div class="steps mui-col-md-10" style="padding:0px">
+              {#if id && id === job.id}
+                <Steps jobId={id} />
+              {/if}
+            </div>
+          </div>
+        </div>
+      </div>
     {/each}
-  {/await}
-</div>
+  {/if}
+{/await}
