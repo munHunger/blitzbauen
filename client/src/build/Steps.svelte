@@ -12,36 +12,44 @@
 </script>
 
 <style>
-  .steps {
+  .output {
     position: relative;
-    display: flex;
-    background-color: rgb(245, 245, 245);
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0px;
+    margin-bottom: 20px;
+    display: inline-block;
+    background-color: rgb(38, 39, 43);
+    color: rgb(33, 214, 88);
+    font-family: "Roboto Mono", monospace;
   }
-  .console {
-    background-color: rgb(45, 47, 49);
+
+  .text {
+    font-family: "Roboto Mono", monospace;
+    margin: 5px;
   }
 </style>
 
+<link
+  href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap"
+  rel="stylesheet" />
 {#await $steps}
   Loading...
 {:then result}
   {#if result}
     {#each result.data.history[0].details as step}
-      <div class="steps mui-col-md-12">
-        <div class="mui-col-md-4">
-          <StatusItem
-            title={step.step}
-            subtitle={step.time}
-            status={step.status}
-            onClick={() => {
-              stepName = step.step;
-              if (onSelect) onSelect(step.step);
-            }} />
+      <div style="padding:0px">
+        <div class="text">
+          <span class="mui--text-light">{step.step}</span>
+          <span class="mui--text-light-secondary" style="float:right">
+            {step.time}
+          </span>
         </div>
-        <div class="mui-col-md-6 console" style="padding:0px">
-          {#if stepName && stepName === step.step}
-            <Console {jobId} step={stepName} />
-          {/if}
+        <div class="output">
+          {#each step.output.split('\n') as paragraph}
+            <div>{paragraph}</div>
+          {/each}
         </div>
       </div>
     {/each}

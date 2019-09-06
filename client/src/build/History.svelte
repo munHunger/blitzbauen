@@ -20,7 +20,7 @@
   }
 
   .steps {
-    background-color: rgb(247, 247, 247);
+    background-color: rgb(45, 47, 49);
   }
 </style>
 
@@ -29,10 +29,10 @@
 {:then result}
   {#if result}
     {#each result.data.history as job}
-      <div class="mui-container-fluid">
-        <div class="mui-row">
-          <div class="build mui-col-md-12">
-            <div class="mui-col-md-2">
+      <div class="mui-container-fluid" style="padding: 0px">
+        <div class="mui-row" style="padding: 0px">
+          <div class="build mui-col-md-12" style="padding: 0px">
+            <div class="mui-col-md-3" style="padding: 0px">
               <StatusItem
                 title={job.name}
                 status={job.status}
@@ -42,7 +42,7 @@
                   if (onSelect) onSelect(job.id);
                 }} />
             </div>
-            <div class="steps mui-col-md-10" style="padding:0px">
+            <div class="steps mui-col-md-9" style="padding:0px">
               {#if id && id === job.id}
                 <Steps jobId={id} />
               {/if}

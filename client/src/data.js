@@ -58,6 +58,7 @@ export const JOBDETAIL = gql`
         step
         status
         time
+        output
       }
     }
   }
