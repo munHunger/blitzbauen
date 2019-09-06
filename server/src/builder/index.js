@@ -120,31 +120,40 @@ function executeSteps(step, history, completeCallback) {
   });
 }
 
-function buildRepo() {
-  return octokit.repos
-    .get({
-      owner: "munhunger",
-      repo: "blitzbauen"
-    })
-    .then(({ data }) => {
-      let repo = data;
-      octokit.repos
-        .listCommits({
+function buildRepo(name) {
+  fs.promises
+    .readFile("data/settings.json")
+    .then(data => JSON.parse(data))
+    .then(settings => settings.repositories.find(repo => repo.name === name))
+    .then(repo => {
+      let repoName = repo.url
+        .substring(repo.url.lastIndexOf("/") + 1)
+        .slice(-4);
+      return octokit.repos
+        .get({
           owner: "munhunger",
-          repo: "blitzbauen"
+          repo: repoName
         })
         .then(({ data }) => {
-          if (fs.existsSync("repos/blitzbauen"))
-            deleteFolderRecursive("repos/blitzbauen");
-          console.log("cloning repo");
-          simplegit.clone(repo.clone_url, "repos/blitzbauen").exec(() => {
-            console.log("cloned");
-            if (fs.existsSync("repos/blitzbauen/blitz.json"))
-              build(
-                JSON.parse(fs.readFileSync("repos/blitzbauen/blitz.json")),
-                "blitz"
-              );
-          });
+          let repo = data;
+          octokit.repos
+            .listCommits({
+              owner: "munhunger",
+              repo: repoName
+            })
+            .then(({ data }) => {
+              if (fs.existsSync(`repos/${repoName}`))
+                deleteFolderRecursive(`repos/${repoName}`);
+              console.log("cloning repo");
+              simplegit.clone(repo.clone_url, `repos/${repoName}`).exec(() => {
+                console.log("cloned");
+                if (fs.existsSync(`repos/${repoName}/blitz.json`))
+                  build(
+                    JSON.parse(fs.readFileSync(`repos/${repoName}/blitz.json`)),
+                    repo.name
+                  );
+              });
+            });
         });
     });
 }

@@ -19,6 +19,6 @@ const addRepository = async (_, input) => {
 };
 
 const triggerBuild = async (_, input) => {
-  return builder.buildRepo().then(_ => true);
+  return builder.buildRepo(input.name).then(_ => true);
 };
 module.exports = { addRepository, triggerBuild };
