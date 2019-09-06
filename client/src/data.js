@@ -51,6 +51,12 @@ export const SETTINGS = gql`
   }
 `;
 
+export const TRIGGER_BUILD = gql`
+  mutation TriggerBuild($name: String!) {
+    triggerBuild(name: $name)
+  }
+`
+
 export const JOBDETAIL = gql`
   query History($id: String!) {
     history(filter: { id: { eq: $id } }) {

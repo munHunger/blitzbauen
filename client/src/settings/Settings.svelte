@@ -1,7 +1,7 @@
 <script>
   import { observe } from "svelte-observable";
   import { getClient, query } from "svelte-apollo";
-  import { client, SETTINGS } from "../data";
+  import { client, SETTINGS, TRIGGER_BUILD } from "../data";
 
   export let onSelect;
 
@@ -10,6 +10,9 @@
   });
 
   let addRepo = () => (repositories = repositories.concat({ url: "" }));
+  function triggerBuild(id) {
+    client.request({ query: TRIGGER_BUILD, variables: { name: id } }).subscribe(_ => {});
+  }
 </script>
 
 <style>
@@ -57,7 +60,7 @@
             <input type="text" value={repo.url} />
             <label>GIT URL</label>
           </div>
-          <button class="mui-btn mui-btn--flat mui-btn--primary">
+          <button class="mui-btn mui-btn--flat mui-btn--primary" on:click={() => triggerBuild(repo.name)}>
             refresh
           </button>
         </div>
