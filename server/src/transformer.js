@@ -12,6 +12,14 @@ const historyTransformer = job => {
       dateFormat(job.timestamp, input.format || "mm:hh dd-mm-yyyy")
   };
 };
+
+const settingsTransformer = setting => {
+  return {
+    ...setting,
+    repositories: () => setting.repositories || []
+  };
+};
 module.exports = {
-  historyTransformer
+  historyTransformer,
+  settingsTransformer
 };

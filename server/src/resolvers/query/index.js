@@ -1,4 +1,7 @@
-const { historyTransformer } = require("../../transformer");
+const {
+  historyTransformer,
+  settingsTransformer
+} = require("../../transformer");
 const { filter } = require("../../filter");
 const fs = require("fs");
 
@@ -26,7 +29,8 @@ const history = async (_, input) => {
 const settings = async input => {
   return fs.promises
     .readFile("./data/settings.json", "utf8")
-    .then(data => JSON.parse(data));
+    .then(data => JSON.parse(data))
+    .then(settings => settingsTransformer(settings));
 };
 
 module.exports = { history, settings };
