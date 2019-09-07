@@ -35,7 +35,7 @@ export const HISTORY = gql`
       id
       name
       status
-      timestamp(format: "yyyy-mm-dd hh:mm")
+      timestamp(format: "yyyy-mm-dd HH:MM:ss")
     }
   }
 `;
@@ -55,7 +55,7 @@ export const TRIGGER_BUILD = gql`
   mutation TriggerBuild($name: String!) {
     triggerBuild(name: $name)
   }
-`
+`;
 
 export const JOBDETAIL = gql`
   query History($id: String!) {
