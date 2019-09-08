@@ -5,6 +5,10 @@ const {
 const { filter } = require("../../filter");
 const fs = require("fs");
 
+/**
+ * Fetches the build history of a project
+ * @param {*} input the graphql schema input
+ */
 const history = async (_, input) => {
   let size = input.pageSize || 3;
   let start = (input.page || 0) * size;
@@ -26,6 +30,10 @@ const history = async (_, input) => {
   );
 };
 
+/**
+ * Fetches the settings of blitzbauen
+ * @param {*} input the graphql schema input
+ */
 const settings = async input => {
   return fs.promises
     .readFile("./data/settings.json", "utf8")

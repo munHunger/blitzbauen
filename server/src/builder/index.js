@@ -129,6 +129,11 @@ function executeSteps(step, history, repoName) {
   });
 }
 
+/**
+ * Builds a repository with the given name.
+ * The repository must be registered in the settings file
+ * @param {String} name the name of a repository in settings.json to build
+ */
 function buildRepo(name) {
   fs.promises
     .readFile("data/settings.json")

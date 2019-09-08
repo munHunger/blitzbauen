@@ -13,6 +13,11 @@ const historyTransformer = job => {
   };
 };
 
+/**
+ * Transforms the output into the format specified in the schema
+ * @param {*} setting the setting object to transform
+ * @returns {*} a literal or a function for transforming a field in the settings query
+ */
 const settingsTransformer = setting => {
   return {
     ...setting,
