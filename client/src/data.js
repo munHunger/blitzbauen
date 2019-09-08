@@ -8,26 +8,25 @@ const wsClient = new SubscriptionClient("ws://localhost:5001/graphql", {
 
 export const client = new WebSocketLink(wsClient);
 
-// export const client = new ApolloClient({
-//   networkInterface: wsClient,
-// });
+const listeners = [];
+wsClient
+  .request({
+    query: gql`
+      subscription {
+        onJobComplete {
+          name
+        }
+      }
+    `,
+    variables: {}
+  })
+  .subscribe(data => {
+    console.log("recieved data from server!");
+    console.log(data);
+    listeners.forEach(listener => listener.apply(this, [data.data]));
+  });
 
-// client
-//   .subscribe({
-//     query: gql`
-//       subscription {
-//         onNewItem
-//       }
-//     `,
-//     variables: {}
-//   })
-//   .subscribe({
-//     next(data) {
-//       console.log("NEXT");
-//       console.log(data);
-//       // Notify your application with the new arrived data
-//     }
-//   });
+export const addListener = listener => listeners.push(listener);
 
 export const HISTORY = gql`
   query {

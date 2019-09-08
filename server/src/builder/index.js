@@ -74,8 +74,7 @@ function build(blitz, name, outputName) {
         );
       })
       .then(_ => {
-        console.log(history);
-        pubsub.publish("onJobComplete", "asdasdasd");
+        pubsub.publish("onJobComplete", { onJobComplete: history });
       })
       .catch(err => {
         fs.writeFile(
@@ -123,7 +122,6 @@ function executeSteps(step, history, repoName) {
       resolve([[h].concat(history)]);
     });
   }).then(data => {
-    console.log(step.name + " " + JSON.stringify(data, null, 2));
     if (step.next) return executeSteps(step.next, data[0], repoName);
     return data[0];
   });
