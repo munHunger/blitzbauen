@@ -1,7 +1,14 @@
 <script>
   import { observe } from "svelte-observable";
   import { getClient, query } from "svelte-apollo";
-  import { client, SETTINGS, TRIGGER_BUILD } from "../data";
+  import {
+    client,
+    wsClient,
+    SETTINGS_SUBSCRIPTION,
+    SETTINGS,
+    TRIGGER_BUILD,
+    UPDATE_SETTINGS
+  } from "../data";
 
   export let onSelect;
 
@@ -21,6 +28,29 @@
     client
       .request({ query: TRIGGER_BUILD, variables: { name: id } })
       .subscribe(_ => {});
+  }
+
+  wsClient
+    .request({
+      query: SETTINGS_SUBSCRIPTION,
+      variables: {}
+    })
+    .subscribe(data => {
+      repo = data.data.updatedSettings;
+    });
+
+  function onUpdate(event, parent, key) {
+    parent[key] = event.srcElement.value || event.srcElement.innerHTML; //Manage both input and span DOM
+    repo = repo;
+    client
+      .request({
+        query: UPDATE_SETTINGS,
+        variables: { settingsInput: repo }
+      })
+      .subscribe((data, error) => {
+        console.log(data);
+        if (error) console.error(error);
+      });
   }
 </script>
 
@@ -59,11 +89,17 @@
     <div class="repo">
       <div class="mui-form--inline mui-col-md-4 form">
         <div class="mui-textfield">
-          <input type="text" value={repo.name} />
+          <input
+            type="text"
+            value={repo.name}
+            on:keyup={event => onUpdate(event, repo, 'name')} />
           <label>Project name</label>
         </div>
         <div class="mui-textfield">
-          <input type="text" value={repo.url} />
+          <input
+            type="text"
+            value={repo.url}
+            on:keyup={event => onUpdate(event, repo, 'url')} />
           <label>GIT URL</label>
         </div>
         <button
@@ -82,7 +118,11 @@
           :
           <span class="value">
             "
-            <span contenteditable="true" onkeyup="">{repo.name}</span>
+            <span
+              contenteditable="true"
+              on:keyup={event => onUpdate(event, repo, 'name')}>
+              {repo.name}
+            </span>
             "
           </span>
           <br />
@@ -90,7 +130,12 @@
           :
           <span class="value">
             "
-            <span contenteditable="true" onkeyup="">{repo.url}</span>
+            <span
+              contenteditable="true"
+              onkeyup=""
+              on:keyup={event => onUpdate(event, repo, 'url')}>
+              {repo.url}
+            </span>
             "
           </span>
           <br />

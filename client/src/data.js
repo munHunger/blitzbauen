@@ -1,8 +1,8 @@
 import { SubscriptionClient } from "subscriptions-transport-ws";
-import ApolloClient, { gql } from "apollo-boost";
+import { gql } from "apollo-boost";
 import { WebSocketLink } from "apollo-link-ws";
 
-const wsClient = new SubscriptionClient("ws://localhost:5001/graphql", {
+export const wsClient = new SubscriptionClient("ws://localhost:5001/graphql", {
   reconnect: true
 });
 
@@ -28,6 +28,18 @@ wsClient
 
 export const addListener = listener => listeners.push(listener);
 
+export const SETTINGS_SUBSCRIPTION = gql`
+  subscription {
+    updatedSettings {
+      repositories {
+        id
+        name
+        url
+      }
+    }
+  }
+`;
+
 export const HISTORY = gql`
   query {
     history(pageSize: 5, sort: { field: "timestamp", asc: true }) {
@@ -43,6 +55,19 @@ export const SETTINGS = gql`
   query {
     settings {
       repositories {
+        id
+        name
+        url
+      }
+    }
+  }
+`;
+
+export const UPDATE_SETTINGS = gql`
+  mutation UpdateSettings($settingsInput: SettingsInput) {
+    updateSettings(settings: $settingsInput) {
+      repositories {
+        id
         name
         url
       }

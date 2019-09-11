@@ -1,4 +1,3 @@
-const { withFilter } = require("graphql-subscriptions");
 const { pubsub } = require("../../subscriptions");
 
 const onJobComplete = {
@@ -6,4 +5,9 @@ const onJobComplete = {
     return pubsub.asyncIterator("onJobComplete");
   }
 };
-module.exports = { onJobComplete };
+const updatedSettings = {
+  subscribe: () => {
+    return pubsub.asyncIterator("updatedSettings");
+  }
+};
+module.exports = { onJobComplete, updatedSettings };

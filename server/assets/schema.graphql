@@ -9,14 +9,13 @@ type Query {
 }
 
 type Mutation {
-  addRepository(repository: RepositoryInput): Settings
-  removeRepository(repository: RepositoryInput): Settings
-  updateRepository(old: RepositoryInput, new: RepositoryInput): Settings
+  updateSettings(settings: SettingsInput): Settings
   triggerBuild(name: String): Boolean
 }
 
 type Subscription {
   onJobComplete: History
+  updatedSettings: Settings
 }
 
 input HistoryFilter {
@@ -69,12 +68,18 @@ type Settings {
   repositories: [Repository]
 }
 
+input SettingsInput {
+  repositories: [RepositoryInput]
+}
+
 type Repository {
+  id: String
   name: String
   url: String
 }
 
 input RepositoryInput {
+  id: String
   name: String
   url: String
 }
