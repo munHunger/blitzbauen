@@ -1,4 +1,4 @@
-const { update } = require("./index");
+const { update } = require("./util");
 
 describe("Partial update of object", () => {
   describe("On primitives", () => {
