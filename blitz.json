@@ -10,7 +10,15 @@
     },
     {
       "name": "test",
-      "script": "cd server && npm run test"
+      "script": "cd server && npm run test",
+      "output": {
+        "reports": {
+          "test": {
+            "dir": "server/test",
+            "type": "junit"
+          }
+        }
+      }
     },
     {
       "name": "install dependencies",

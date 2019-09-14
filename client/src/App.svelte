@@ -6,6 +6,7 @@
   import { client } from "./data";
   import { setClient } from "svelte-apollo";
   import Navbar from "./menu/Navbar.svelte";
+  import Header from "./header/Header.svelte";
   import Settings from "./settings/Settings.svelte";
   import Build from "./build/Build.svelte";
   import Alert from "./alert/Alert.svelte";
@@ -40,9 +41,12 @@
   }
 </style>
 
-<Navbar />
-<div class="content-wrapper mui-container-fluid" style="margin-left:5rem">
-  <RouterView />
+<Header />
+<div class="content">
+  <Navbar />
+  <div class="content-wrapper mui-container-fluid" style="margin-left:5rem">
+    <RouterView />
+  </div>
 </div>
 
 <Alert />

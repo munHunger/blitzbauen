@@ -1,5 +1,5 @@
 <script>
-  import {router} from '@spaceavocado/svelte-router';
+  import { router } from "@spaceavocado/svelte-router";
 
   let routeTo = url => $router.push(url);
 
@@ -21,6 +21,12 @@
 </style>
 
 <div class="bar" style="width:{width}">
-  <img src="/git.png" alt="repositories" on:click={() => routeTo("/settings")} />
-  <img src="/cubes.png" alt="builds" on:click={() => routeTo("/build")} />
+  <img
+    src="/fa/git-alt-brands.svg"
+    alt="repositories"
+    on:click={() => routeTo('/settings')} />
+  <img
+    src="/fa/cubes-solid.svg"
+    alt="builds"
+    on:click={() => routeTo('/build')} />
 </div>

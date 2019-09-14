@@ -2,6 +2,12 @@ const fs = require("fs");
 const builder = require("../../builder");
 const { pubsub } = require("../../subscriptions");
 
+/**
+ * Does a diff and updates only what is needed.
+ * Note that this is updating as a side-effect
+ * @param {*} oldData 
+ * @param {*} newData 
+ */
 const update = (oldData, newData) => {
   Object.keys(newData).forEach(key => {
     if (
@@ -37,6 +43,10 @@ const update = (oldData, newData) => {
   });
 };
 
+/**
+ * Update the entire settings object
+ * @param {*} input the graphql input
+ */
 const updateSettings = async (_, input) => {
   return fs.promises
     .readFile("./data/settings.json", "utf8")
@@ -56,4 +66,5 @@ const updateSettings = async (_, input) => {
 const triggerBuild = async (_, input) => {
   return builder.buildRepo(input.name).then(_ => true);
 };
-module.exports = { triggerBuild, updateSettings };
+
+module.exports = { triggerBuild, updateSettings, update };

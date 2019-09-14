@@ -19,6 +19,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "babel-eslint": "10.0.2",
     "jasmine": "^2.8.0",
+    "jasmine-reporters": "2.3.2",
     "nodemon": "^1.18.9",
     "nyc": "^14.1.1"
   },
