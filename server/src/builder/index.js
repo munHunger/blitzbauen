@@ -6,6 +6,8 @@ const chalk = require("chalk");
 
 const { pubsub } = require("../subscriptions");
 
+const { parseOutput } = require("./outputParser");
+
 /**
  * Recursively delete everything in the path, including the path
  * @param {string} path the url to delete
@@ -119,7 +121,13 @@ function executeSteps(step, history, repoName) {
       else h.status = -1;
       console.log(chalk.red(stderr));
       h.time = new Date().getTime() - start;
-      resolve([[h].concat(history)]);
+      if (step.output)
+        parseOutput("repos/" + repoName, step.output).then(output => {
+          console.log("P'arsed output\n" + JSON.stringify(output, null, 2));
+          h.artifact = output;
+          resolve([[h].concat(history)]);
+        });
+      else resolve([[h].concat(history)]);
     });
   }).then(data => {
     if (step.next) return executeSteps(step.next, data[0], repoName);
@@ -133,11 +141,12 @@ function executeSteps(step, history, repoName) {
  * @param {String} name the name of a repository in settings.json to build
  */
 function buildRepo(name) {
-  fs.promises
+  return fs.promises
     .readFile("data/settings.json")
     .then(data => JSON.parse(data))
     .then(settings => settings.repositories.find(repo => repo.name === name))
     .then(repo => {
+      if (!repo) return Promise.reject("Did not find repo in settings");
       let repoName = repo.url
         .substring(repo.url.lastIndexOf("/") + 1)
         .slice(0, -4);
@@ -149,26 +158,20 @@ function buildRepo(name) {
         })
         .then(({ data }) => {
           let repo = data;
-          octokit.repos
-            .listCommits({
-              owner: "munhunger",
-              repo: repoName
-            })
-            .then(({ data }) => {
-              if (fs.existsSync(`repos/${repoName}`))
-                deleteFolderRecursive(`repos/${repoName}`);
-              console.log("cloning repo");
-              simplegit.clone(repo.clone_url, `repos/${repoName}`).exec(() => {
-                console.log("cloned");
-                if (fs.existsSync(`repos/${repoName}/blitz.json`))
-                  build(
-                    JSON.parse(fs.readFileSync(`repos/${repoName}/blitz.json`)),
-                    repo.name,
-                    jobName
-                  );
-              });
-            });
-        });
+          if (fs.existsSync(`repos/${repoName}`))
+            deleteFolderRecursive(`repos/${repoName}`);
+          console.log("cloning repo");
+          simplegit.clone(repo.clone_url, `repos/${repoName}`).exec(() => {
+            console.log("cloned");
+            if (fs.existsSync(`repos/${repoName}/blitz.json`))
+              build(
+                JSON.parse(fs.readFileSync(`repos/${repoName}/blitz.json`)),
+                repo.name,
+                jobName
+              );
+          });
+        })
+        .catch(e => Promise.reject("Could not fetch repo " + e));
     });
 }
 
