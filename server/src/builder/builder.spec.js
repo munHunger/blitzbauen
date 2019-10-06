@@ -24,7 +24,7 @@ const blitz = {
   steps: [
     {
       name: "test",
-      script: "cd server && npm run test",
+      script: "cd server && echo 'hello world'",
       output: {
         reports: {
           test: {
@@ -33,6 +33,10 @@ const blitz = {
           }
         }
       }
+    },
+    {
+      name: "error",
+      script: "exit 1"
     }
   ]
 };
@@ -62,6 +66,26 @@ describe("Builder", () => {
       "simple-git": sinon.stub().returns(simplegit)
     }).then(b => (builder = b))
   );
+  describe("Running step", () => {
+    it("resolves the output on complete", () =>
+      builder
+        .runStep({ ...blitz.steps[0], repo: { name: "blitz" } })
+        .execution.then(data => expect(data.trim()).toEqual("hello world")));
+    it("updates the out object", () => {
+      let step = builder.runStep({
+        ...blitz.steps[0],
+        repo: { name: "blitz" }
+      });
+      step.execution.then(_ =>
+        expect(step.out().trim()).toEqual("hello world")
+      );
+    });
+    it("rejects on error", () =>
+      builder
+        .runStep({ ...blitz.steps[1], repo: { name: "blitz" } })
+        .execution.then(_ => new Error("did not reject"))
+        .catch(_ => {}));
+  });
   describe("Reading settings", () => {
     it("returns undefined if no repo is found", () =>
       expect(builder.readSettings("")).not.toBeDefined());
