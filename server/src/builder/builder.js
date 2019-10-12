@@ -5,10 +5,7 @@ const chalk = require("chalk");
 const exec = require("child_process").exec;
 
 let db;
-let dbConnect = datason
-  .connect("./data")
-  .then(d => (db = d))
-  .then(_ => console.log(JSON.stringify(db, null, 2)));
+let dbConnect = datason.connect("./data").then(d => (db = d));
 
 /**
  * @param {String} repo The name of the repository

@@ -201,7 +201,6 @@ function build(repoName) {
         )
         .then(data => {
           history.details = data;
-          console.log(JSON.stringify(db, null, 4));
           db.history.register(history.id, history);
         });
     });
