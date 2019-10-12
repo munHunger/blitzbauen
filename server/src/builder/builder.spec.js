@@ -37,6 +37,10 @@ const blitz = {
     {
       name: "error",
       script: "exit 1"
+    },
+    {
+      name: "OK",
+      script: "echo 'hello universe'"
     }
   ]
 };
@@ -44,7 +48,9 @@ const blitz = {
 const fs = {
   existsSync: sinon.stub(),
   promises: {
-    readFile: sinon.stub().returns(new Promise((resolve, _) => resolve(blitz)))
+    readFile: sinon
+      .stub()
+      .returns(new Promise((resolve, _) => resolve(JSON.stringify(blitz))))
   }
 };
 
@@ -56,16 +62,39 @@ var datason = {
   )
 };
 
-var builder;
+var builder = proxyquire("./builder", {
+  fs,
+  datason,
+  "simple-git": sinon.stub().returns(simplegit)
+});
 
 describe("Builder", () => {
-  beforeAll(() =>
-    proxyquire("./builder", {
-      fs,
-      datason,
-      "simple-git": sinon.stub().returns(simplegit)
-    }).then(b => (builder = b))
-  );
+  beforeAll(() => builder.init);
+  describe("Running steps", () => {
+    it("Runns all steps", () =>
+      builder
+        .runStepsInProgression(
+          [blitz.steps[0], blitz.steps[2]].map(step => {
+            return { ...step, repo: { name: "blitz" } };
+          })
+        )
+        .then(data =>
+          expect(data).toEqual(
+            jasmine.objectContaining({
+              details: [
+                jasmine.objectContaining({
+                  step: "test",
+                  output: "hello world\n"
+                }),
+                jasmine.objectContaining({
+                  step: "OK",
+                  output: "hello universe\n"
+                })
+              ]
+            })
+          )
+        ));
+  });
   describe("Running step", () => {
     it("resolves the output on complete", () =>
       builder

@@ -123,7 +123,7 @@ function executeSteps(step, history, repoName) {
       h.time = new Date().getTime() - start;
       if (step.output)
         parseOutput("repos/" + repoName, step.output).then(output => {
-          console.log("P'arsed output\n" + JSON.stringify(output, null, 2));
+          console.log("Parsed output\n" + JSON.stringify(output, null, 2));
           h.artifact = output;
           resolve([[h].concat(history)]);
         });
@@ -175,4 +175,37 @@ function buildRepo(name) {
     });
 }
 
-module.exports = { buildRepo };
+let { db, init } = require("../db");
+init.then(db => {
+  if (!db.history) db.createTable("history");
+});
+const builder = require("./builder");
+
+function build(repoName) {
+  let repo = builder.readSettings(repoName);
+  if (repo) {
+    let history = {
+      timestamp: new Date().getTime(),
+      name: repoName,
+      id: Math.random()
+        .toString(36)
+        .substring(8)
+    };
+    deleteFolderRecursive(`./repos/${repo.name}`);
+    builder.cloneRepo(repo).then(blitz => {
+      return builder
+        .runStepsInProgression(
+          blitz.steps.map(step => {
+            return { ...step, repo };
+          })
+        )
+        .then(data => {
+          history.details = data;
+          console.log(JSON.stringify(db, null, 4));
+          db.history.register(history.id, history);
+        });
+    });
+  }
+}
+
+module.exports = { buildRepo: build, init };

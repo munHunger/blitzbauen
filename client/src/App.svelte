@@ -38,13 +38,16 @@
   }
   .content-wrapper {
     box-sizing: border-box;
+    display: inline-block;
   }
 </style>
 
 <Header />
 <div class="content">
   <Navbar />
-  <div class="content-wrapper mui-container-fluid" style="margin-left:5rem">
+  <div
+    class="mui-container-fluid content-wrapper"
+    style="margin-left:5rem; display:inline-block;">
     <RouterView />
   </div>
 </div>
