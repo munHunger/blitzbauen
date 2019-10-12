@@ -39,6 +39,7 @@
   .content-wrapper {
     box-sizing: border-box;
     display: inline-block;
+    width: 100%;
   }
 </style>
 

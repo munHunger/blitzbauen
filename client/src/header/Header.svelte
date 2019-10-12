@@ -11,13 +11,14 @@
 
 <style>
   .bar {
-    position: relative;
+    position: sticky;
     height: 40px;
     width: 100%;
     background-color: #dedede;
     text-align: center;
     top: 0px;
     left: 0px;
+    z-index: 99;
   }
   .inbox {
     position: relative;
