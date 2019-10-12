@@ -200,7 +200,7 @@ function build(repoName) {
           })
         )
         .then(data => {
-          history.details = data;
+          history.details = data.details;
           db.history.register(history.id, history);
         });
     });

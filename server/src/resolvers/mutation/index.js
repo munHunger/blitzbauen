@@ -1,3 +1,4 @@
+let { db } = require("../../db");
 const fs = require("fs");
 const builder = require("../../builder");
 const { pubsub } = require("../../subscriptions");
@@ -8,15 +9,10 @@ const { update } = require("./util");
  * @param {*} input the graphql input
  */
 const updateSettings = async (_, input) => {
-  return fs.promises
-    .readFile("./data/settings.json", "utf8")
-    .then(data => JSON.parse(data))
-    .then(data => {
-      update(data, JSON.parse(JSON.stringify(input.settings)));
-      fs.promises.writeFile("./data/settings.json", JSON.stringify(data));
-      pubsub.publish("updatedSettings", { updatedSettings: data });
-      return data;
-    });
+  update(db.settings, JSON.parse(JSON.stringify(input.settings)));
+  pubsub.publish("updatedSettings", { updatedSettings: db.settings });
+  db.settings.save();
+  return db.settings;
 };
 
 /**
