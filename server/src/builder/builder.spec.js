@@ -105,7 +105,7 @@ describe("Builder", () => {
         ...blitz.steps[0],
         repo: { name: "blitz" }
       });
-      step.execution.then(_ =>
+      return step.execution.then(_ =>
         expect(step.out().trim()).toEqual("hello world")
       );
     });
@@ -126,7 +126,7 @@ describe("Builder", () => {
   describe("Cloning repository", () => {
     it("clones the url and rejects non blitz projects", () => {
       fs.existsSync.returns(false);
-      builder
+      return builder
         .cloneRepo(settings.settings.repositories[0])
         .then(_ => new Error("did not reject"))
         .catch(_ =>
@@ -139,7 +139,7 @@ describe("Builder", () => {
     });
     it("clones the url and resolves valid blitz projects", () => {
       fs.existsSync.returns(true);
-      builder.cloneRepo(settings.settings.repositories[0]).then(data => {
+      return builder.cloneRepo(settings.settings.repositories[0]).then(data => {
         sinon.assert.calledWith(
           simplegit.clone,
           settings.settings.repositories[0].url,
