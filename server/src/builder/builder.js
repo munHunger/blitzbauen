@@ -51,7 +51,7 @@ function runStep(step, outCallback, errCallback) {
       process.on("exit", code => {
         console.log(out);
         if (code == 0) resolve(out);
-        else reject(`Exited ${code}`);
+        else reject(step);
       });
     })
   };
@@ -64,24 +64,34 @@ function runStepsInProgression(steps) {
     time: new Date().getTime(),
     details: []
   };
-  return steps
-    .reduce(
-      (acc, val) =>
-        acc.then(_ => {
-          let start = new Date().getTime();
-          return runStep(val, o => (out += o), e => (err += e)).execution.then(
-            data =>
-              buildHistory.details.push({
+  return {
+    out: () => out,
+    err: () => err,
+    history: () => buildHistory,
+    execution: steps
+      .reduce(
+        (acc, val) =>
+          acc.then(_ => {
+            let start = new Date().getTime();
+            return runStep(
+              val,
+              o => (out += o),
+              e => (err += e)
+            ).execution.then(data => {
+              out = "";
+              err = "";
+              return buildHistory.details.push({
                 step: val.name,
                 output: data,
                 time: new Date().getTime() - start
-              })
-          );
-        }),
-      Promise.resolve()
-    )
-    .then(_ => (buildHistory.time = new Date().getTime() - buildHistory.time))
-    .then(_ => buildHistory);
+              });
+            });
+          }),
+        Promise.resolve()
+      )
+      .then(_ => (buildHistory.time = new Date().getTime() - buildHistory.time))
+      .then(_ => buildHistory)
+  };
 }
 
 module.exports = {
