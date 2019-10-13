@@ -8,13 +8,34 @@ let db;
 let dbConnect = datason.connect("./data").then(d => (db = d));
 
 /**
+ * @typedef {Object} execution
+ * @property {()=>String} out a function for getting the latest out text
+ * @property {()=>String} err a function for getting the latest err text
+ * @property {Promise} execution the promise of what is currently running.
+ */
+/**
+ * @typedef {Object} step
+ * @property {String} name the name of the step
+ * @property {String} script the bash script to execute
+ * @property {Object} repo the repository data of the step
+ * @property {String} repo.name the name of the cloned repo
+ */
+
+/**
  * @param {String} repo The name of the repository
+ * @returns The database settings of the sought after repo, or undefined if none is found
  */
 function readSettings(repo) {
-  console.log(repo);
   return db.settings.repositories.find(r => r.name === repo);
 }
 
+/**
+ * Clones a git repo locally for future building
+ * @param {Object} repo The repository to build
+ * @param {String} repo.name the name of the repository, and the name of the folder to clone into
+ * @param {String} repo.url the url to the git repo to clone
+ * @returns {Promise<Object>} The parsed blitz file if the repo was a blitz project. reject otherwise
+ */
 function cloneRepo(repo) {
   console.log(repo);
   return new Promise((resolve, reject) =>
@@ -30,7 +51,14 @@ function cloneRepo(repo) {
     })
   );
 }
-
+/**
+ * Runs a single step in the build process
+ * @param {step} step the step to execute
+ * @param {(text:String)=>void} outCallback a function to call if there are changes in the out pipe of the script
+ * @param {(text:String)=>void} errCallback a function to call if there are changes in the err pipe of the script
+ *
+ * @returns {execution} the running step
+ */
 function runStep(step, outCallback, errCallback) {
   console.log(`Running step ${step.name}`);
   let out = "";
@@ -57,6 +85,13 @@ function runStep(step, outCallback, errCallback) {
   };
 }
 
+/**
+ * Run all steps of a blitz project in sequence.
+ * Will reject at first error
+ * @param {step[]} steps a list of steps to execute
+ *
+ * @returns {execution} will resolve the build history
+ */
 function runStepsInProgression(steps) {
   let out = "";
   let err = "";
