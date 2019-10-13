@@ -78,7 +78,7 @@ describe("Builder", () => {
             return { ...step, repo: { name: "blitz" } };
           })
         )
-        .then(data =>
+        .execution.then(data =>
           expect(data).toEqual(
             jasmine.objectContaining({
               details: [
