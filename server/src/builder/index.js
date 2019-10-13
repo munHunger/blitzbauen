@@ -28,7 +28,10 @@ function deleteFolderRecursive(path) {
     fs.rmdirSync(path);
   }
 }
-
+/**
+ * Build a repository that is in the settings
+ * @param {String} repoName the name of the repository to build. This should be in the settings
+ */
 function build(repoName) {
   let repo = builder.readSettings(repoName);
   if (repo) {
