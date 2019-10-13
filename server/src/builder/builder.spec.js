@@ -1,5 +1,10 @@
 const proxyquire = require("proxyquire").noCallThru();
 const sinon = require("sinon");
+let exec = {
+  exec: script => {
+    return require("child_process").exec(script);
+  }
+};
 var simplegit = {
   clone: sinon.stub().returns({
     exec: fn => {
@@ -24,7 +29,7 @@ const blitz = {
   steps: [
     {
       name: "test",
-      script: "cd server && echo 'hello world'",
+      script: "echo 'hello world'",
       output: {
         reports: {
           test: {
@@ -65,7 +70,8 @@ var datason = {
 var builder = proxyquire("./builder", {
   fs,
   datason,
-  "simple-git": sinon.stub().returns(simplegit)
+  "simple-git": sinon.stub().returns(simplegit),
+  child_process: exec
 });
 
 describe("Builder", () => {

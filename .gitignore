@@ -1,7 +1,7 @@
-test
-data/
-repos/
-history/
+server/test
+server/data/
+server/repos/
+server/history/
 client/public/bundle.*
 
 # Logs
