@@ -23,7 +23,7 @@ wsClient
   .subscribe(data => {
     console.log("recieved data from server!");
     console.log(data);
-    listeners.forEach(listener => listener.apply(this, [data.data]));
+    listeners.forEach(listener => listener.apply(_, [data.data]));
   });
 
 export const addListener = listener => listeners.push(listener);
