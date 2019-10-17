@@ -43,7 +43,7 @@ function build(repoName) {
         .substring(8)
     };
     deleteFolderRecursive(`./repos/${repo.name}`);
-    builder.cloneRepo(repo).then(blitz => {
+    return builder.cloneRepo(repo).then(blitz => {
       let job = builder.runStepsInProgression(
         blitz.steps.map(step => {
           return { ...step, repo };
@@ -51,8 +51,13 @@ function build(repoName) {
       );
       return job.execution
         .then(data => {
-          history.details = data.details;
+          console.log(JSON.stringify(data, null, 2));
+          history.details = data.details.map(step => {
+            return { ...step, status: 0 };
+          });
+          history.status = 0;
           db.history.register(history.id, history);
+          pubsub.publish("onJobComplete", { onJobComplete: history });
         })
         .catch(err => {
           history.details = job.history().details;
@@ -61,11 +66,10 @@ function build(repoName) {
             output: job.out() + "\n" + job.err(),
             status: 1
           });
+          history.status = 1;
           db.history.register(history.id, history);
-        })
-        .finally(_ =>
-          pubsub.publish("onJobComplete", { onJobComplete: job.history() })
-        );
+          pubsub.publish("onJobComplete", { onJobComplete: history });
+        });
     });
   }
 }

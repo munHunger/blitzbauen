@@ -3,6 +3,7 @@ const fs = require("fs");
 const simplegit = require("simple-git")();
 const chalk = require("chalk");
 const exec = require("child_process").exec;
+const outputParser = require("./outputParser");
 
 let db;
 let dbConnect = datason.connect("./data").then(d => (db = d));
@@ -78,8 +79,13 @@ function runStep(step, outCallback, errCallback) {
       });
       process.on("exit", code => {
         console.log(out);
-        if (code == 0) resolve(out);
-        else reject(step);
+        (step.output
+          ? outputParser.parseOutput(`repos/${step.repo.name}`, step.output)
+          : Promise.resolve()
+        ).then(outputData => {
+          if (code == 0) resolve({ out, test: outputData });
+          else reject(step);
+        });
       });
     })
   };
@@ -117,7 +123,8 @@ function runStepsInProgression(steps) {
               err = "";
               return buildHistory.details.push({
                 step: val.name,
-                output: data,
+                output: data.out,
+                test: data.test,
                 time: new Date().getTime() - start
               });
             });
