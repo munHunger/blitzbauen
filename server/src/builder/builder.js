@@ -119,20 +119,23 @@ function runStepsInProgression(steps) {
         (acc, val) =>
           acc.then(_ => {
             let start = new Date().getTime();
-            return runStep(val, o => (out += o), e => (err += e))
-              .execution.then(data => {
-                out = "";
-                err = "";
-                logger.info(`Finished step ${val.name}`);
-                const result = {
-                  step: val.name,
-                  output: data.out,
-                  test: data.test,
-                  time: new Date().getTime() - start
-                };
-                logger.debug("step done", { data: result });
-                return buildHistory.details.push(result);
-              })
+            return runStep(
+              val,
+              o => (out += o),
+              e => (err += e)
+            ).execution.then(data => {
+              out = "";
+              err = "";
+              logger.info(`Finished step ${val.name}`);
+              const result = {
+                step: val.name,
+                output: data.out,
+                test: data.test,
+                time: new Date().getTime() - start
+              };
+              logger.debug("step done", { data: result });
+              return buildHistory.details.push(result);
+            });
           }),
         Promise.resolve()
       )
