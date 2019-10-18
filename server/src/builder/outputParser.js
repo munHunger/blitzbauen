@@ -34,8 +34,11 @@ function parseOutput(baseDir, output) {
               .readFile(`${baseDir}/${output.reports.test.dir}/${file}`, "utf8")
               .then(data => parser.parseStringPromise(data))
               .then(data => {
+                logger.debug(`read testdata from ${file}`, {
+                  data
+                });
                 let result = {
-                  name: (data.testsuites.testsuite[0] || {}).name,
+                  name: file.slice(13,-4),
                   tests: data.testsuites.attr.tests,
                   failures: data.testsuites.attr.failures,
                   errors: data.testsuites.attr.errors,
@@ -47,7 +50,8 @@ function parseOutput(baseDir, output) {
                     .map(test => {
                       return {
                         name: test.attr.name,
-                        class: test.attr.classname
+                        class: test.attr.classname,
+                        success: !test.failure
                       };
                     })
                 };
