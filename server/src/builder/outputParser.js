@@ -34,7 +34,7 @@ function parseOutput(baseDir, output) {
               .readFile(`${baseDir}/${output.reports.test.dir}/${file}`, "utf8")
               .then(data => parser.parseStringPromise(data))
               .then(data => {
-                return {
+                let result = {
                   name: (data.testsuites.testsuite[0] || {}).name,
                   tests: data.testsuites.attr.tests,
                   failures: data.testsuites.attr.failures,
@@ -51,6 +51,8 @@ function parseOutput(baseDir, output) {
                       };
                     })
                 };
+                logger.debug(`parsed data`, { data: result });
+                return result;
               })
           )
         );

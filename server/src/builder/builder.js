@@ -84,11 +84,7 @@ function runStep(step, outCallback, errCallback) {
           ? outputParser.parseOutput(`repos/${step.repo.name}`, step.output)
           : Promise.resolve()
         ).then(outputData => {
-          if (code == 0) resolve({ out, test: outputData, code });
-          else {
-            logger.warn("rejected step", { data: { ...step, out, err } });
-            reject(step);
-          }
+          resolve({ out, test: outputData, code });
         });
       });
     })
@@ -131,10 +127,13 @@ function runStepsInProgression(steps) {
                 step: val.name,
                 output: data.out,
                 test: data.test,
-                time: new Date().getTime() - start
+                time: new Date().getTime() - start,
+                status: data.code === 0 ? 0 : 1
               };
               logger.debug("step done", { data: result });
-              return buildHistory.details.push(result);
+              buildHistory.details.push(result);
+              if(result.status !== 0)
+                return Promise.reject();
             });
           }),
         Promise.resolve()

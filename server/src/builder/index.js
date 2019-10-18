@@ -58,18 +58,15 @@ function build(repoName) {
           });
           history.status = 0;
           db.history.register(history.id, history);
+          logger.debug(`registered build history`, { data: history });
           pubsub.publish("onJobComplete", { onJobComplete: history });
         })
         .catch(err => {
           logger.warn(`failure building ${repoName}`, { data: err });
           history.details = job.history().details;
-          history.details.push({
-            step: err.name,
-            output: job.out() + "\n" + job.err(),
-            status: 1
-          });
           history.status = 1;
           db.history.register(history.id, history);
+          logger.debug(`registered build history`);
           pubsub.publish("onJobComplete", { onJobComplete: history });
         });
     });
