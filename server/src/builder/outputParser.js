@@ -24,7 +24,7 @@ const logger = require("../logger").logger("output parser");
  */
 function parseOutput(baseDir, output) {
   if (((output.reports || {}).test || {}).type === "junit") {
-    logger.debug(`starting output parsing`)
+    logger.debug(`starting output parsing`);
     return fs.promises
       .readdir(`${baseDir}/${output.reports.test.dir}`)
       .then(files => {
