@@ -1,7 +1,7 @@
 const xml2js = require("xml2js");
 const fs = require("fs");
 const parser = new xml2js.Parser({ attrkey: "attr" });
-const logger = require.main.require("./logger").logger("output parser");
+const logger = require("../logger").logger("output parser");
 
 /**
  * @typedef testsuit
@@ -24,6 +24,7 @@ const logger = require.main.require("./logger").logger("output parser");
  */
 function parseOutput(baseDir, output) {
   if (((output.reports || {}).test || {}).type === "junit") {
+    logger.debug(`starting output parsing`)
     return fs.promises
       .readdir(`${baseDir}/${output.reports.test.dir}`)
       .then(files => {

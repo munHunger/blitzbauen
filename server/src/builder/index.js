@@ -5,7 +5,7 @@ init.then(db => {
   if (!db.history) db.createTable("history");
 });
 const builder = require("./builder");
-const logger = require.main.require("./logger").logger("builder");
+const logger = require("../logger").logger("builder");
 
 /**
  * Recursively delete everything in the path, including the path

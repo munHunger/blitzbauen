@@ -1,4 +1,4 @@
-const logger = require.main.require("./logger").logger("mutation util");
+const logger = require("../../logger").logger("mutation util");
 
 /**
  * Does a diff and updates only what is needed.

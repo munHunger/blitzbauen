@@ -4,7 +4,7 @@ const simplegit = require("simple-git")();
 const chalk = require("chalk");
 const exec = require("child_process").exec;
 const outputParser = require("./outputParser");
-const logger = require.main.require("./logger").logger("build engine");
+const logger = require("../logger").logger("build engine");
 
 let db;
 let dbConnect = datason.connect("./data").then(d => (db = d));
