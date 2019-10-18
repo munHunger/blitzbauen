@@ -4,6 +4,7 @@ const simplegit = require("simple-git")();
 const chalk = require("chalk");
 const exec = require("child_process").exec;
 const outputParser = require("./outputParser");
+const logger = require.main.require("./logger").logger("build engine");
 
 let db;
 let dbConnect = datason.connect("./data").then(d => (db = d));
@@ -38,10 +39,10 @@ function readSettings(repo) {
  * @returns {Promise<Object>} The parsed blitz file if the repo was a blitz project. reject otherwise
  */
 function cloneRepo(repo) {
-  console.log(repo);
+  logger.info("cloneRepo", { data: repo });
   return new Promise((resolve, reject) =>
     simplegit.clone(repo.url, `repos/${repo.name}`).exec(() => {
-      console.log("cloned repo " + repo.name);
+      logger.debug("cloned repo " + repo.name);
       if (fs.existsSync(`repos/${repo.name}/blitz.json`))
         resolve(
           fs.promises
@@ -61,14 +62,14 @@ function cloneRepo(repo) {
  * @returns {execution} the running step
  */
 function runStep(step, outCallback, errCallback) {
-  console.log(`Running step ${step.name}`);
+  logger.info(`Running step ${step.name}`);
   let out = "";
   let err = "";
   return {
     out: () => out,
     err: () => err,
     execution: new Promise((resolve, reject) => {
-      let process = exec(step.script, { cwd: `repos/${step.repo.name}` });
+      let process = exec(step.script, { cwd: `./repos/${step.repo.name}` });
       process.stdout.on("data", data => {
         out += data;
         if (outCallback) outCallback.apply(this, [data]);
@@ -78,13 +79,16 @@ function runStep(step, outCallback, errCallback) {
         if (errCallback) errCallback.apply(this, [data]);
       });
       process.on("exit", code => {
-        console.log(out);
+        logger.debug(`Exited step ${step.name} with code ${code}`);
         (step.output
           ? outputParser.parseOutput(`repos/${step.repo.name}`, step.output)
           : Promise.resolve()
         ).then(outputData => {
-          if (code == 0) resolve({ out, test: outputData });
-          else reject(step);
+          if (code == 0) resolve({ out, test: outputData, code });
+          else {
+            logger.warn("rejected step", { data: { ...step, out, err } });
+            reject(step);
+          }
         });
       });
     })
@@ -105,6 +109,7 @@ function runStepsInProgression(steps) {
     time: new Date().getTime(),
     details: []
   };
+  logger.debug("starting build");
   return {
     out: () => out,
     err: () => err,
@@ -114,24 +119,25 @@ function runStepsInProgression(steps) {
         (acc, val) =>
           acc.then(_ => {
             let start = new Date().getTime();
-            return runStep(
-              val,
-              o => (out += o),
-              e => (err += e)
-            ).execution.then(data => {
-              out = "";
-              err = "";
-              return buildHistory.details.push({
-                step: val.name,
-                output: data.out,
-                test: data.test,
-                time: new Date().getTime() - start
-              });
-            });
+            return runStep(val, o => (out += o), e => (err += e))
+              .execution.then(data => {
+                out = "";
+                err = "";
+                logger.info(`Finished step ${val.name}`);
+                const result = {
+                  step: val.name,
+                  output: data.out,
+                  test: data.test,
+                  time: new Date().getTime() - start
+                };
+                logger.debug("step done", { data: result });
+                return buildHistory.details.push(result);
+              })
           }),
         Promise.resolve()
       )
       .then(_ => (buildHistory.time = new Date().getTime() - buildHistory.time))
+      .then(_ => logger.debug("completed build"))
       .then(_ => buildHistory)
   };
 }

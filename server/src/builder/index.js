@@ -1,12 +1,11 @@
 const fs = require("fs");
-
 const { pubsub } = require("../subscriptions");
-
 let { db, init } = require("../db");
 init.then(db => {
   if (!db.history) db.createTable("history");
 });
 const builder = require("./builder");
+const logger = require.main.require("./logger").logger("builder");
 
 /**
  * Recursively delete everything in the path, including the path
@@ -33,6 +32,7 @@ function deleteFolderRecursive(path) {
  * @param {String} repoName the name of the repository to build. This should be in the settings
  */
 function build(repoName) {
+  logger.debug(`building ${repoName}`);
   let repo = builder.readSettings(repoName);
   if (repo) {
     let history = {
@@ -42,6 +42,7 @@ function build(repoName) {
         .toString(36)
         .substring(8)
     };
+    logger.debug(`attached id ${history.id} to ${repoName}`);
     deleteFolderRecursive(`./repos/${repo.name}`);
     return builder.cloneRepo(repo).then(blitz => {
       let job = builder.runStepsInProgression(
@@ -51,7 +52,7 @@ function build(repoName) {
       );
       return job.execution
         .then(data => {
-          console.log(JSON.stringify(data, null, 2));
+          logger.info(`completed building ${repoName}`, { data });
           history.details = data.details.map(step => {
             return { ...step, status: 0 };
           });
@@ -60,6 +61,7 @@ function build(repoName) {
           pubsub.publish("onJobComplete", { onJobComplete: history });
         })
         .catch(err => {
+          logger.warn(`failure building ${repoName}`, { data: err });
           history.details = job.history().details;
           history.details.push({
             step: err.name,

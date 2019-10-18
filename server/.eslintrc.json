@@ -9,6 +9,9 @@
   "parser": "babel-eslint",
   "rules": {
     "semi": 2,
+    "no-console": [
+      "error"
+    ],
     "require-jsdoc": [
       "error",
       {

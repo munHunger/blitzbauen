@@ -14,7 +14,7 @@
     position: sticky;
     height: 40px;
     width: 100%;
-    background-color: #dedede;
+    background-color: rgb(38, 39, 43);
     text-align: center;
     top: 0px;
     left: 0px;
@@ -48,6 +48,7 @@
     font-weight: 600;
     font-size: 30px;
     font-family: "Roboto Mono", monospace;
+    color: rgb(27, 112, 151);
   }
 </style>
 

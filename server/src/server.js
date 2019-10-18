@@ -1,11 +1,9 @@
 var express = require("express");
-
 const resolvers = require("./resolvers");
 const { ApolloServer } = require("apollo-server-express");
-
 const { typeDefs } = require("./schema");
-
 const http = require("http");
+const logger = require("./logger").logger("server");
 
 startServer(5001);
 /**
@@ -29,10 +27,10 @@ function startServer(port) {
   server.installSubscriptionHandlers(httpServer);
 
   httpServer.listen(port, () => {
-    console.log(
+    logger.info(
       `Server ready at http://localhost:${port}${server.graphqlPath}`
     );
-    console.log(
+    logger.info(
       `Subscriptions ready at ws://localhost:${port}${server.subscriptionsPath}`
     );
   });

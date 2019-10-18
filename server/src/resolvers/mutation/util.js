@@ -1,3 +1,5 @@
+const logger = require.main.require("./logger").logger("mutation util");
+
 /**
  * Does a diff and updates only what is needed.
  * Note that this is updating as a side-effect
@@ -17,7 +19,8 @@ const update = (oldData, newData) => {
             let old = oldData[key].find(o => o.id === data.id);
             if (old) {
               update(old, data);
-            } else console.log("Attempting to update nonexisting data");
+            } else
+              logger.warn("Attempting to update nonexisting data", { data });
           });
         oldData[key] = (oldData[key] || []).concat(
           newData[key]

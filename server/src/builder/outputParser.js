@@ -1,6 +1,7 @@
 const xml2js = require("xml2js");
 const fs = require("fs");
 const parser = new xml2js.Parser({ attrkey: "attr" });
+const logger = require.main.require("./logger").logger("output parser");
 
 /**
  * @typedef testsuit
@@ -32,10 +33,6 @@ function parseOutput(baseDir, output) {
               .readFile(`${baseDir}/${output.reports.test.dir}/${file}`, "utf8")
               .then(data => parser.parseStringPromise(data))
               .then(data => {
-                console.log("data:" + JSON.stringify(data, null, 2));
-                return data;
-              })
-              .then(data => {
                 return {
                   name: (data.testsuites.testsuite[0] || {}).name,
                   tests: data.testsuites.attr.tests,
@@ -56,14 +53,10 @@ function parseOutput(baseDir, output) {
               })
           )
         );
-      })
-      .then(out => {
-        console.log(JSON.stringify(out, null, 4));
-        return out;
       });
   } else {
     return new Promise((_, reject) => {
-      console.log("nothing to parse");
+      logger.warn(`nothing to parse`);
       reject();
     });
   }
