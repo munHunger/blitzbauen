@@ -29,6 +29,10 @@ const blitzFormat = printf(({ level, message, label, timestamp, data }) => {
   }`;
 });
 
+/**
+ * Creates a logger
+ * @param {string} system a label that denotes who is logging
+ */
 const logger = system =>
   winston.createLogger({
     format: combine(timestamp(), label({ label: system }), blitzFormat),
