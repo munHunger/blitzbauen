@@ -48,7 +48,6 @@ const logger = system =>
 
     transports: [new winston.transports.Console()]
   });
-
 logger("logger").info(
   `Logs setup with level ${level} and printData ${shouldPrintData}`
 );

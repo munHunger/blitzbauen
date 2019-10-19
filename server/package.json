@@ -42,5 +42,8 @@
     "apollo-boost": "0.4.4",
     "datason": "^1.0.5",
     "winston": "^3.2.1"
-  }
+  },
+  "eslintIgnore": [
+    "repos/**"
+  ]
 }
