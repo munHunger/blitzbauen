@@ -3,12 +3,21 @@
 
   import StatusItem from "./StatusItem.svelte";
   import { getClient, query } from "svelte-apollo";
-  import { client, HISTORY } from "../data";
+  import { client, HISTORY, JOB_STARTED_SUBSCRIPTION } from "../data";
 
   let id;
   export let onSelect;
 
   const builds = client.request({ query: HISTORY });
+
+  client
+    .request({
+      query: JOB_STARTED_SUBSCRIPTION,
+      variables: {}
+    })
+    .subscribe(data => {
+      builds = builds; //trigger rerender
+    });
 </script>
 
 <style>

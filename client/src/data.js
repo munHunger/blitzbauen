@@ -23,7 +23,7 @@ wsClient
   .subscribe(data => {
     console.log("recieved data from server!");
     console.log(data);
-    listeners.forEach(listener => listener.apply(_, [data.data]));
+    listeners.forEach(listener => listener.apply(undefined, [data.data]));
   });
 
 export const addListener = listener => listeners.push(listener);
@@ -36,6 +36,15 @@ export const SETTINGS_SUBSCRIPTION = gql`
         name
         url
       }
+    }
+  }
+`;
+export const JOB_STARTED_SUBSCRIPTION = gql`
+  subscription {
+    onJobStarted {
+      id
+      name
+      status
     }
   }
 `;

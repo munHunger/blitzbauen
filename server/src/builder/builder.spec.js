@@ -6,12 +6,12 @@ let exec = {
   }
 };
 var simplegit = {
-  clone: sinon.stub().returns({
-    exec: fn => {
-      fn.apply();
-    }
-  }),
   cwd: sinon.stub().returns({
+    clone: sinon.stub().returns({
+      exec: fn => {
+        fn.apply();
+      }
+    }),
     log: fn => {
       fn.apply(this, [
         "err",

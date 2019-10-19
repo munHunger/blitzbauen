@@ -38,26 +38,32 @@ function readSettings(repo) {
  * @returns {Promise<Object>} The parsed blitz file if the repo was a blitz project and with the hash added to it. reject otherwise
  */
 function cloneRepo(repo) {
-  logger.info("cloneRepo", { data: repo });
+  logger.info(`cloning repo in ${process.cwd()}/repos/`, { data: repo });
   return new Promise((resolve, reject) =>
-    simplegit.clone(repo.url, `repos/${repo.name}`).exec(() => {
-      simplegit.cwd(`repos/${repo.name}`).log((err, log) => {
-        let hash = log.latest.hash;
-        logger.debug(`cloned repo ${repo.name} with hash ${hash}`, {
-          data: {
-            message: log.latest.message,
-            date: log.latest.date
-          }
+    simplegit
+      .cwd(`${process.cwd()}`)
+      .clone(repo.url, `./repos/${repo.name}`)
+      .exec(() => {
+        logger.debug(`cloned repo ${repo.name}`);
+        simplegit.cwd(`repos/${repo.name}`).log((err, log) => {
+          let hash = log.latest.hash;
+          logger.debug(`attached hash ${hash} to repo ${repo.name}`, {
+            data: {
+              message: log.latest.message,
+              date: log.latest.date
+            }
+          });
+          if (fs.existsSync(`repos/${repo.name}/blitz.json`))
+            resolve(
+              fs.promises
+                .readFile(`repos/${repo.name}/blitz.json`)
+                .then(data => {
+                  return { ...JSON.parse(data), hash };
+                })
+            );
+          else reject("Not a blitz project");
         });
-        if (fs.existsSync(`repos/${repo.name}/blitz.json`))
-          resolve(
-            fs.promises.readFile(`repos/${repo.name}/blitz.json`).then(data => {
-              return { ...JSON.parse(data), hash };
-            })
-          );
-        else reject("Not a blitz project");
-      });
-    })
+      })
   );
 }
 /**
@@ -102,10 +108,11 @@ function runStep(step, outCallback, errCallback) {
  * Run all steps of a blitz project in sequence.
  * Will reject at first error
  * @param {step[]} steps a list of steps to execute
+ * @param {(out:String,err:String,history:any)=>void} onChange A function to be called anytime there is a change
  *
  * @returns {execution} will resolve the build history
  */
-function runStepsInProgression(steps) {
+function runStepsInProgression(steps, onChange) {
   let out = "";
   let err = "";
   let buildHistory = {
@@ -139,7 +146,11 @@ function runStepsInProgression(steps) {
               };
               logger.debug("step done", { data: result });
               buildHistory.details.push(result);
-              if (result.status !== 0) return Promise.reject();
+              if (onChange) onChange.apply(this, [out, err, buildHistory]);
+              if (result.status !== 0) {
+                logger.debug(`rejecting build`);
+                return Promise.reject("Result.status != 0");
+              }
             });
           }),
         Promise.resolve()

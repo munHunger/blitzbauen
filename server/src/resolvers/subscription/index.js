@@ -1,13 +1,23 @@
-const { pubsub } = require("../../subscriptions");
+const { pubsub, subscriptionTopics } = require("../../subscriptions");
 
 const onJobComplete = {
   subscribe: () => {
-    return pubsub.asyncIterator("onJobComplete");
+    return pubsub.asyncIterator(subscriptionTopics.jobComplete);
+  }
+};
+const onJobStarted = {
+  subscribe: () => {
+    return pubsub.asyncIterator(subscriptionTopics.jobStarted);
+  }
+};
+const onJobUpdated = {
+  subscribe: () => {
+    return pubsub.asyncIterator(subscriptionTopics.jobUpdated);
   }
 };
 const updatedSettings = {
   subscribe: () => {
-    return pubsub.asyncIterator("updatedSettings");
+    return pubsub.asyncIterator(subscriptionTopics.updatedSettings);
   }
 };
-module.exports = { onJobComplete, updatedSettings };
+module.exports = { onJobComplete, onJobStarted, onJobUpdated, updatedSettings };

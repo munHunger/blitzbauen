@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { pubsub } = require("../subscriptions");
+const { pubsub, subscriptionTopics } = require("../subscriptions");
 let { db, init } = require("../db");
 
 init.then(db => {
@@ -41,16 +41,26 @@ function build(repoName) {
       name: repoName,
       id: Math.random()
         .toString(36)
-        .substring(8)
+        .substring(8),
+      status: -1
     };
-    logger.debug(`attached id ${history.id} to ${repoName}`);
+    db.history.register(history.id, history);
+    pubsub.publish(subscriptionTopics.jobStarted, { onJobStarted: history });
+    logger.debug(`registered build history ${history.id} for repo ${repoName}`);
     deleteFolderRecursive(`./repos/${repo.name}`);
     return builder.cloneRepo(repo).then(blitz => {
       history.hash = blitz.hash;
       let job = builder.runStepsInProgression(
         blitz.steps.map(step => {
           return { ...step, repo };
-        })
+        }),
+        (out, err, job) => {
+          logger.debug(`detected change in build status`);
+          history.details = job.details;
+          pubsub.publish(subscriptionTopics.jobUpdated, {
+            onJobUpdated: history
+          });
+        }
       );
       return job.execution
         .then(data => {
@@ -59,17 +69,21 @@ function build(repoName) {
             return { ...step, status: 0 };
           });
           history.status = 0;
-          db.history.register(history.id, history);
-          logger.debug(`registered build history`, { data: history });
-          pubsub.publish("onJobComplete", { onJobComplete: history });
+          db.history[history.id].save();
+          logger.debug(`saved build history`, { data: history });
+          pubsub.publish(subscriptionTopics.jobComplete, {
+            onJobComplete: history
+          });
         })
         .catch(err => {
           logger.warn(`failure building ${repoName}`, { data: err });
           history.details = job.history().details;
           history.status = 1;
-          db.history.register(history.id, history);
-          logger.debug(`registered build history`);
-          pubsub.publish("onJobComplete", { onJobComplete: history });
+          db.history[history.id].save();
+          logger.debug(`saved build history`);
+          pubsub.publish(subscriptionTopics.jobComplete, {
+            onJobComplete: history
+          });
         });
     });
   }
