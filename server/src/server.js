@@ -8,6 +8,10 @@ const logger = require("./logger").logger("server");
 //startFrontend(5000);
 startBackend(5001);
 
+/**
+ * Start the frontend server on the given port
+ * @param {Number} port the port to start on
+ */
 function startFrontend(port) {
   const app = express();
   const rootPath = `${__dirname}/../../client/public`;
@@ -19,9 +23,8 @@ function startFrontend(port) {
 }
 
 /**
- * Start the server on the given port
+ * Start the backend graphql server on the given port
  * @param {Number} port the port to start on
- * @returns {void}
  */
 function startBackend(port) {
   const app = express();
