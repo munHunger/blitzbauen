@@ -1,7 +1,6 @@
 const datason = require("datason");
 const fs = require("fs");
 const simplegit = require("simple-git")();
-const chalk = require("chalk");
 const exec = require("child_process").exec;
 const outputParser = require("./outputParser");
 const logger = require("../logger").logger("build engine");
@@ -36,20 +35,28 @@ function readSettings(repo) {
  * @param {Object} repo The repository to build
  * @param {String} repo.name the name of the repository, and the name of the folder to clone into
  * @param {String} repo.url the url to the git repo to clone
- * @returns {Promise<Object>} The parsed blitz file if the repo was a blitz project. reject otherwise
+ * @returns {Promise<Object>} The parsed blitz file if the repo was a blitz project and with the hash added to it. reject otherwise
  */
 function cloneRepo(repo) {
   logger.info("cloneRepo", { data: repo });
   return new Promise((resolve, reject) =>
     simplegit.clone(repo.url, `repos/${repo.name}`).exec(() => {
-      logger.debug("cloned repo " + repo.name);
-      if (fs.existsSync(`repos/${repo.name}/blitz.json`))
-        resolve(
-          fs.promises
-            .readFile(`repos/${repo.name}/blitz.json`)
-            .then(data => JSON.parse(data))
-        );
-      else reject("Not a blitz project");
+      simplegit.cwd(`repos/${repo.name}`).log((err, log) => {
+        let hash = log.latest.hash;
+        logger.debug(`cloned repo ${repo.name} with hash ${hash}`, {
+          data: {
+            message: log.latest.message,
+            date: log.latest.date
+          }
+        });
+        if (fs.existsSync(`repos/${repo.name}/blitz.json`))
+          resolve(
+            fs.promises.readFile(`repos/${repo.name}/blitz.json`).then(data => {
+              return { ...JSON.parse(data), hash };
+            })
+          );
+        else reject("Not a blitz project");
+      });
     })
   );
 }
@@ -132,8 +139,7 @@ function runStepsInProgression(steps) {
               };
               logger.debug("step done", { data: result });
               buildHistory.details.push(result);
-              if(result.status !== 0)
-                return Promise.reject();
+              if (result.status !== 0) return Promise.reject();
             });
           }),
         Promise.resolve()

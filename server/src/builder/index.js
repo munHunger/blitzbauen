@@ -1,6 +1,7 @@
 const fs = require("fs");
 const { pubsub } = require("../subscriptions");
 let { db, init } = require("../db");
+
 init.then(db => {
   if (!db.history) db.createTable("history");
 });
@@ -45,6 +46,7 @@ function build(repoName) {
     logger.debug(`attached id ${history.id} to ${repoName}`);
     deleteFolderRecursive(`./repos/${repo.name}`);
     return builder.cloneRepo(repo).then(blitz => {
+      history.hash = blitz.hash;
       let job = builder.runStepsInProgression(
         blitz.steps.map(step => {
           return { ...step, repo };

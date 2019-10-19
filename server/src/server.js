@@ -1,3 +1,5 @@
+require("./schedules/gitpoll");
+
 var express = require("express");
 const resolvers = require("./resolvers");
 const { ApolloServer } = require("apollo-server-express");
