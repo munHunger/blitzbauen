@@ -76,6 +76,7 @@ type TestSuite {
 type Test {
   name: String
   class: String
+  failure: String
 }
 
 type Settings {

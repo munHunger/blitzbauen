@@ -38,7 +38,7 @@ function parseOutput(baseDir, output) {
                   data
                 });
                 let result = {
-                  name: file.slice(13,-4),
+                  name: file.slice(13, -4),
                   tests: data.testsuites.attr.tests,
                   failures: data.testsuites.attr.failures,
                   errors: data.testsuites.attr.errors,
@@ -51,7 +51,9 @@ function parseOutput(baseDir, output) {
                       return {
                         name: test.attr.name,
                         class: test.attr.classname,
-                        success: !test.failure
+                        failure: (test.failure || [])
+                          .map(f => f.attr.message)
+                          .join("\n")
                       };
                     })
                 };
