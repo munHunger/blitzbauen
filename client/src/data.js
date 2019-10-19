@@ -39,7 +39,18 @@ export const SETTINGS_SUBSCRIPTION = gql`
     }
   }
 `;
+
 export const JOB_STARTED_SUBSCRIPTION = gql`
+  subscription {
+    onJobStarted {
+      id
+      name
+      status
+    }
+  }
+`;
+
+export const JOB_COMPLETED_SUBSCRIPTION = gql`
   subscription {
     onJobStarted {
       id

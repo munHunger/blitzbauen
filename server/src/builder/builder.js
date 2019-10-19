@@ -1,6 +1,6 @@
 const datason = require("datason");
 const fs = require("fs");
-const simplegit = require("simple-git")();
+const simplegit = require("simple-git");
 const exec = require("child_process").exec;
 const outputParser = require("./outputParser");
 const logger = require("../logger").logger("build engine");
@@ -39,13 +39,14 @@ function readSettings(repo) {
  */
 function cloneRepo(repo) {
   logger.info(`cloning repo in ${process.cwd()}/repos/`, { data: repo });
+  let git = simplegit();
   return new Promise((resolve, reject) =>
-    simplegit
+    git
       .cwd(`${process.cwd()}`)
       .clone(repo.url, `repos/${repo.name}`)
       .exec(() => {
         logger.debug(`cloned repo ${repo.name}`);
-        simplegit.cwd(`repos/${repo.name}`).log((err, log) => {
+        git.cwd(`repos/${repo.name}`).log((err, log) => {
           let hash = log.latest.hash;
           logger.debug(`attached hash ${hash} to repo ${repo.name}`, {
             data: {

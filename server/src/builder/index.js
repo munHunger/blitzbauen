@@ -9,7 +9,7 @@ const builder = require("./builder");
 const logger = require("../logger").logger("builder");
 
 /**
- * Recursively delete everything in the path, including the path
+ * Recursively delete everything synchronously in the path, including the path
  * @param {string} path the url to delete
  * @returns {void}
  */
