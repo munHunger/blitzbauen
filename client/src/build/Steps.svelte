@@ -1,5 +1,5 @@
 <script>
-  import Console from "./Console.svelte";
+  import Test from "./output/Test.svelte";
   import StatusItem from "./StatusItem.svelte";
   import { getClient, query } from "svelte-apollo";
   import { client, JOBDETAIL } from "../data";
@@ -39,6 +39,9 @@
       <div style="padding:0px">
         <div class="text">
           <span class="mui--text-light">{step.step}</span>
+          {#each step.test || [] as test}
+            <Test {test} />
+          {/each}
           <span class="mui--text-light-secondary" style="float:right">
             {step.time}
           </span>

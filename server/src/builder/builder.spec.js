@@ -29,15 +29,7 @@ const blitz = {
   steps: [
     {
       name: "test",
-      script: "echo 'hello world'",
-      output: {
-        reports: {
-          test: {
-            dir: "server/test",
-            type: "junit"
-          }
-        }
-      }
+      script: "echo 'hello world'"
     },
     {
       name: "error",
@@ -105,7 +97,9 @@ describe("Builder", () => {
     it("resolves the output on complete", () =>
       builder
         .runStep({ ...blitz.steps[0], repo: { name: "blitz" } })
-        .execution.then(data => expect(data.trim()).toEqual("hello world")));
+        .execution.then(data =>
+          expect(data.out.trim()).toEqual("hello world")
+        ));
     it("updates the out object", () => {
       let step = builder.runStep({
         ...blitz.steps[0],

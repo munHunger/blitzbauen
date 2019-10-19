@@ -89,6 +89,15 @@ export const JOBDETAIL = gql`
         status
         time
         output
+        test {
+          tests
+          failures
+          suite {
+            name
+            class
+            failure
+          }
+        }
       }
     }
   }
