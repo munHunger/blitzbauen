@@ -5,20 +5,21 @@ let exec = {
     return require("child_process").exec(script);
   }
 };
-var simplegit = {
-  cwd: sinon.stub().returns({
-    clone: sinon.stub().returns({
-      exec: fn => {
-        fn.apply();
-      }
-    }),
-    log: fn => {
-      fn.apply(this, [
-        "err",
-        { latest: { hash: "hash", message: "commit message" } }
-      ]);
+var simpleGitCommands = {
+  clone: sinon.stub().returns({
+    exec: fn => {
+      fn.apply();
     }
-  })
+  }),
+  log: fn => {
+    fn.apply(this, [
+      "err",
+      { latest: { hash: "hash", message: "commit message" } }
+    ]);
+  }
+};
+var simplegit = {
+  cwd: sinon.stub().returns(simpleGitCommands)
 };
 
 const settings = {
@@ -139,7 +140,7 @@ describe("Builder", () => {
         .then(_ => new Error("did not reject"))
         .catch(_ =>
           sinon.assert.calledWith(
-            simplegit.clone,
+            simpleGitCommands.clone,
             settings.settings.repositories[0].url,
             `repos/${settings.settings.repositories[0].name}`
           )
@@ -149,7 +150,7 @@ describe("Builder", () => {
       fs.existsSync.returns(true);
       return builder.cloneRepo(settings.settings.repositories[0]).then(data => {
         sinon.assert.calledWith(
-          simplegit.clone,
+          simpleGitCommands.clone,
           settings.settings.repositories[0].url,
           `repos/${settings.settings.repositories[0].name}`
         );

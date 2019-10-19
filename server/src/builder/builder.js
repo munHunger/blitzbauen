@@ -42,7 +42,7 @@ function cloneRepo(repo) {
   return new Promise((resolve, reject) =>
     simplegit
       .cwd(`${process.cwd()}`)
-      .clone(repo.url, `./repos/${repo.name}`)
+      .clone(repo.url, `repos/${repo.name}`)
       .exec(() => {
         logger.debug(`cloned repo ${repo.name}`);
         simplegit.cwd(`repos/${repo.name}`).log((err, log) => {
