@@ -132,8 +132,14 @@ function runStepsInProgression(steps, onChange) {
             let start = new Date().getTime();
             return runStep(
               val,
-              o => (out += o),
-              e => (err += e)
+              o => {
+                out += o;
+                if (onChange) onChange.apply(this, [out, err, buildHistory]);
+              },
+              e => {
+                err += e;
+                if (onChange) onChange.apply(this, [out, err, buildHistory]);
+              }
             ).execution.then(data => {
               out = "";
               err = "";

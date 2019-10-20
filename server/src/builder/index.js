@@ -7,6 +7,7 @@ init.then(db => {
 });
 const builder = require("./builder");
 const logger = require("../logger").logger("builder");
+const diff = require("deep-object-diff");
 
 /**
  * Recursively delete everything synchronously in the path, including the path
@@ -42,7 +43,8 @@ function build(repoName) {
       id: Math.random()
         .toString(36)
         .substring(8),
-      status: -1
+      status: -1,
+      details: []
     };
     db.history.register(history.id, history);
     pubsub.publish(subscriptionTopics.jobStarted, { onJobStarted: history });
@@ -55,8 +57,16 @@ function build(repoName) {
           return { ...step, repo };
         }),
         (out, err, job) => {
-          logger.debug(`detected change in build status`);
+          let old = JSON.parse(JSON.stringify(history));
           history.details = job.details;
+          if (
+            history.details.length === 0 ||
+            history.details[history.details.length - 1].time
+          )
+            history.details.push({ output: "" });
+          history.details[history.details.length - 1].output = out;
+          let d = diff.detailedDiff(history, old);
+          logger.debug(`detected change in build status`, { data: history });
           pubsub.publish(subscriptionTopics.jobUpdated, {
             onJobUpdated: history
           });

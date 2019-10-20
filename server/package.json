@@ -41,7 +41,8 @@
     "apollo-server-express": "2.9.0",
     "apollo-boost": "0.4.4",
     "datason": "^1.0.5",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "deep-object-diff": "1.1.0"
   },
   "eslintIgnore": [
     "repos/**"

@@ -1,4 +1,4 @@
-server/test
+test/
 server/data/
 server/repos/
 server/history/

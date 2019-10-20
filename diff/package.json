@@ -1,0 +1,24 @@
+{
+  "name": "blitzdiff",
+  "version": "0.1.0",
+  "author": "munhunger",
+  "licence": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "nyc --reporter=lcov --reporter=text jasmine",
+    "coverage": "nyc check-coverage --lines 95 --functions 100 --branches 95",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "babel-eslint": "10.0.2",
+    "jasmine": "^2.8.0",
+    "jasmine-reporters": "2.3.2",
+    "nyc": "^14.1.1"
+  }
+}
