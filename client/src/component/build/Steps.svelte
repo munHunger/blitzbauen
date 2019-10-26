@@ -12,7 +12,7 @@
   if (!details)
     client
       .request({ query: JOBDETAIL, variables: { id: jobId } })
-      .subscribe(data => (details = data.history[0].details));
+      .subscribe(data => (details = data.data.history[0].details));
 </script>
 
 <style>

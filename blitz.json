@@ -2,6 +2,46 @@
   "steps": [
     {
       "name": "install dependencies",
+      "script": "cd diff && npm install"
+    },
+    {
+      "name": "lint",
+      "script": "cd diff && npm run lint"
+    },
+    {
+      "name": "test",
+      "script": "cd diff && npm run test",
+      "output": {
+        "reports": {
+          "test": {
+            "dir": "diff/test",
+            "type": "junit"
+          }
+        }
+      }
+    },
+    {
+      "name": "install dependencies",
+      "script": "cd vc && npm install"
+    },
+    {
+      "name": "lint",
+      "script": "cd vc && npm run lint"
+    },
+    {
+      "name": "test",
+      "script": "cd vc && npm run test",
+      "output": {
+        "reports": {
+          "test": {
+            "dir": "vc/test",
+            "type": "junit"
+          }
+        }
+      }
+    },
+    {
+      "name": "install dependencies",
       "script": "cd server && npm install"
     },
     {

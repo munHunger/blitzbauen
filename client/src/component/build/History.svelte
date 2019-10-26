@@ -100,7 +100,8 @@
               status={job.status}
               subtitle={job.timestamp}
               onClick={() => {
-                id = job.id;
+                if (id !== job.id) id = job.id;
+                else id = undefined;
                 if (onSelect) onSelect(job.id);
               }} />
           </div>

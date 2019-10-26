@@ -18,7 +18,7 @@ const history = async (_, input) => {
   let sortField = (input.sort || {}).field || "timestamp";
   return Object.keys(db.history)
     .filter(key => typeof db.history[key] !== "function")
-    .map(key => db.history[key])
+    .map(key => db.history[key].latest)
     .sort(
       (a, b) =>
         (a[sortField] > b[sortField]
@@ -29,7 +29,7 @@ const history = async (_, input) => {
     )
     .filter(job => filter(input, job))
     .slice(start, end)
-    .map(job => historyTransformer(job.latest));
+    .map(job => historyTransformer(job));
 };
 
 /**
