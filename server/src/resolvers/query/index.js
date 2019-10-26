@@ -32,6 +32,10 @@ const history = async (_, input) => {
     .map(job => historyTransformer(job.latest));
 };
 
+/**
+ * Gets a changeset from the requested hash to latest
+ * @param {*} input the graphql schema input
+ */
 const changeSet = async (_, input) => {
   logger.debug("Queried changeset", { data: input });
   if (!input.id) return new Error("Missing job id");
@@ -55,6 +59,10 @@ const changeSet = async (_, input) => {
     .pop();
 };
 
+/**
+ * Get the state at a specified hash
+ * @param {*} input the graphql schema input
+ */
 const getStateAtHash = async (_, input) => {
   return Object.keys(db.history)
     .filter(key => typeof db.history[key] !== "function")
