@@ -30,6 +30,11 @@ function createRepo(baseCommit) {
   return loadRepoFunctions(result);
 }
 
+/**
+ * add the required functions to the repo.
+ * Can be useful if repo is serialized/deserialized
+ * @param {repo} repo a repo to load into
+ */
 function loadRepoFunctions(repo) {
   let result = {
     ...repo,
@@ -39,6 +44,11 @@ function loadRepoFunctions(repo) {
   return result;
 }
 
+/**
+ * Get all changes required to update from the state of the hash to latest, or latest if hash is not provided
+ * @param {String} hash the hash to base the state onto
+ * @param {repo} repo
+ */
 function getChangeFromCommit(hash, repo) {
   if (!hash) return blitzDiff.diff(repo.base, repo.latest);
   let i = repo.history.map(h => h.hash).indexOf(hash);
@@ -49,6 +59,11 @@ function getChangeFromCommit(hash, repo) {
   return blitzDiff.diff(state, repo.latest);
 }
 
+/**
+ * Load the state from base to the commit
+ * @param {String} hash the hash to load the state up to
+ * @param {repo} repo
+ */
 function getStateOnCommit(hash, repo) {
   let i = repo.history.map(h => h.hash).indexOf(hash);
   let state = deepClone(repo.base);
@@ -58,6 +73,11 @@ function getStateOnCommit(hash, repo) {
   return state;
 }
 
+/**
+ * Commits a new change to the repo
+ * @param {(any)=>any} supplier a function that takes in the latest state and returns a new state
+ * @param {repo} repo
+ */
 function commit(supplier, repo) {
   let newData = deepClone(supplier.apply({}, [deepClone(repo.latest)]));
   let eq = deepEqual(repo.latest, newData);
@@ -71,6 +91,9 @@ function commit(supplier, repo) {
   }
 }
 
+/**
+ * Generates a hash to use for commit identifier
+ */
 function genHash() {
   return Math.random()
     .toString(36)
