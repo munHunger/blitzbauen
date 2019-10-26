@@ -37,14 +37,12 @@ const history = async (_, input) => {
  * @param {*} input the graphql schema input
  */
 const changeSet = async (_, input) => {
-  logger.debug("Queried changeset", { data: input });
   if (!input.id) return new Error("Missing job id");
   return Object.keys(db.history)
     .filter(key => typeof db.history[key] !== "function")
     .filter(key => key === input.id)
     .map(key => db.history[key])
     .map(job => {
-      logger.debug("found changeset to return");
       if (!input.hash)
         return {
           hash: job.history[job.history.length - 1].hash,

@@ -144,7 +144,7 @@ function runStepsInProgression(steps, onChange) {
                   ]);
               },
               e => {
-                err += e;
+                out += e; //might as well as we dont differentiate it
                 if (onChange) onChange.apply(this, [out, err, buildHistory]);
               }
             ).execution.then(data => {
@@ -162,7 +162,7 @@ function runStepsInProgression(steps, onChange) {
               buildHistory.details.push(result);
               if (onChange) onChange.apply(this, [out, err, buildHistory]);
               if (result.status !== 0) {
-                logger.debug(`rejecting build`);
+                logger.debug(`rejecting build`, { data: err });
                 return Promise.reject("Result.status != 0");
               }
             });
