@@ -1,3 +1,8 @@
+/**
+ * Diffs 2 objects and provides a changeset
+ * @param {*} a the object to base from
+ * @param {*} b the object to change to
+ */
 function diff(a, b, acc) {
   if (!acc) return diff(a, b, {});
   if (Object.keys(a).length == 0 && Object.keys(b).length == 0) return acc;
@@ -56,6 +61,11 @@ function diff(a, b, acc) {
   return acc;
 }
 
+/**
+ * Joins a changeset with an object, thus applying its changes
+ * @param {*} obj the object to apply the changes to
+ * @param {*} diff the changeset to apply
+ */
 function join(obj, diff) {
   if (diff.deleted)
     Object.keys(diff.deleted).forEach(key => {
