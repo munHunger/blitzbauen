@@ -8,7 +8,7 @@
     SETTINGS,
     TRIGGER_BUILD,
     UPDATE_SETTINGS
-  } from "../data";
+  } from "../../data";
 
   export let onSelect;
 

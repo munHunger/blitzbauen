@@ -1,13 +1,15 @@
 const fs = require("fs");
 const { pubsub, subscriptionTopics } = require("../subscriptions");
 let { db, init } = require("../db");
+const cloneDeep = require("clone-deep");
 
 init.then(db => {
   if (!db.history) db.createTable("history");
 });
 const builder = require("./builder");
 const logger = require("../logger").logger("builder");
-const diff = require("deep-object-diff");
+const blitzdiff = require("blitzdiff");
+const vc = require("blitz-vc");
 
 /**
  * Recursively delete everything synchronously in the path, including the path
@@ -29,6 +31,7 @@ function deleteFolderRecursive(path) {
     fs.rmdirSync(path);
   }
 }
+
 /**
  * Build a repository that is in the settings
  * @param {String} repoName the name of the repository to build. This should be in the settings
@@ -37,7 +40,7 @@ function build(repoName) {
   logger.debug(`building ${repoName}`);
   let repo = builder.readSettings(repoName);
   if (repo) {
-    let history = {
+    let history = vc.createRepo({
       timestamp: new Date().getTime(),
       name: repoName,
       id: Math.random()
@@ -45,54 +48,70 @@ function build(repoName) {
         .substring(8),
       status: -1,
       details: []
-    };
-    db.history.register(history.id, history);
-    pubsub.publish(subscriptionTopics.jobStarted, { onJobStarted: history });
-    logger.debug(`registered build history ${history.id} for repo ${repoName}`);
+    });
+    db.history.register(history.latest.id, history);
+    pubsub.publish(subscriptionTopics.jobStarted, {
+      onJobStarted: history.latest
+    });
+    logger.debug(
+      `registered build history ${history.latest.id} for repo ${repoName}`
+    );
+    Math.random()
+      .toString(36)
+      .substring(8);
     deleteFolderRecursive(`./repos/${repo.name}`);
     return builder.cloneRepo(repo).then(blitz => {
-      history.hash = blitz.hash;
+      history.commit(l => {
+        l.hash = blitz.hash;
+        return l;
+      });
       let job = builder.runStepsInProgression(
         blitz.steps.map(step => {
           return { ...step, repo };
         }),
         (out, err, job) => {
-          let old = JSON.parse(JSON.stringify(history));
-          history.details = job.details;
-          if (
-            history.details.length === 0 ||
-            history.details[history.details.length - 1].time
-          )
-            history.details.push({ output: "" });
-          history.details[history.details.length - 1].output = out;
-          let d = diff.detailedDiff(history, old);
-          logger.debug(`detected change in build status`, { data: history });
-          pubsub.publish(subscriptionTopics.jobUpdated, {
-            onJobUpdated: history
+          history.commit(latestCommit => {
+            latestCommit.details = job.details;
+            pubsub.publish(subscriptionTopics.jobUpdated, {
+              onJobUpdated: history.latest
+            });
+            return latestCommit;
           });
         }
       );
       return job.execution
         .then(data => {
           logger.info(`completed building ${repoName}`, { data });
-          history.details = data.details.map(step => {
-            return { ...step, status: 0 };
+          history.commit(latest => {
+            latest.details = data.details.map(step => {
+              return { ...step, status: 0 };
+            });
+            latest.status = 0;
+            return latest;
           });
-          history.status = 0;
-          db.history[history.id].save();
-          logger.debug(`saved build history`, { data: history });
+          db.history[history.latest.id].save();
+          logger.debug(`saved build history`, {
+            data: {
+              commits: history.history.length,
+              id: history.latest.id
+            }
+          });
+
           pubsub.publish(subscriptionTopics.jobComplete, {
-            onJobComplete: history
+            onJobComplete: history.latest
           });
         })
         .catch(err => {
           logger.warn(`failure building ${repoName}`, { data: err });
-          history.details = job.history().details;
-          history.status = 1;
-          db.history[history.id].save();
+          history.commit(latest => {
+            latest.details = job.history().details;
+            latest.status = 1;
+            return latest;
+          });
+          db.history[history.latest.id].save();
           logger.debug(`saved build history`);
           pubsub.publish(subscriptionTopics.jobComplete, {
-            onJobComplete: history
+            onJobComplete: history.latest
           });
         });
     });

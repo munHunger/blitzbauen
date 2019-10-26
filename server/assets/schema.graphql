@@ -5,6 +5,8 @@ type Query {
     sort: Sort
     filter: HistoryFilter
   ): [History]
+  changeSet(id: String, hash: String): JobUpdate
+  getStateAtHash(id: String, hash: String): History
   settings: Settings
 }
 
@@ -18,6 +20,12 @@ type Subscription {
   onJobStarted: History
   onJobUpdated: History
   updatedSettings: Settings
+}
+
+type JobUpdate {
+  hash: String # the latest hash
+  change: String # Blitzdiff change
+  base: History # Optional base set
 }
 
 input HistoryFilter {
@@ -49,6 +57,13 @@ input StringFilter {
 input Sort {
   field: String
   asc: Boolean
+}
+
+type HistoryDiff {
+  added: History
+  updated: History
+  deleted: History
+  appended: History
 }
 
 type History {

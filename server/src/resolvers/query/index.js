@@ -4,7 +4,8 @@ const {
   settingsTransformer
 } = require("../../transformer");
 const { filter } = require("../../filter");
-const fs = require("fs");
+const blitzVC = require("blitz-vc");
+const logger = require("../../logger").logger("Query");
 
 /**
  * Fetches the build history of a project
@@ -28,7 +29,45 @@ const history = async (_, input) => {
     )
     .filter(job => filter(input, job))
     .slice(start, end)
-    .map(job => historyTransformer(job));
+    .map(job => historyTransformer(job.latest));
+};
+
+const changeSet = async (_, input) => {
+  logger.debug("Queried changeset", { data: input });
+  if (!input.id) return new Error("Missing job id");
+  return Object.keys(db.history)
+    .filter(key => typeof db.history[key] !== "function")
+    .filter(key => key === input.id)
+    .map(key => db.history[key])
+    .map(job => {
+      logger.debug("found changeset to return");
+      if (!input.hash)
+        return {
+          hash: job.history[job.history.length - 1].hash,
+          base: historyTransformer(job.latest)
+        };
+
+      return {
+        hash: job.history[job.history.length - 1].hash,
+        change: JSON.stringify(blitzVC.getChangeFromCommit(input.hash, job))
+      };
+    })
+    .pop();
+};
+
+const getStateAtHash = async (_, input) => {
+  return Object.keys(db.history)
+    .filter(key => typeof db.history[key] !== "function")
+    .filter(key => key === input.id)
+    .map(key => db.history[key])
+    .map(job => {
+      logger.debug("found changeset to return");
+      logger.debug("Returning state", {
+        data: blitzVC.getStateOnCommit(input.hash, job)
+      });
+      return blitzVC.getStateOnCommit(input.hash, job);
+    })
+    .pop();
 };
 
 /**
@@ -39,4 +78,4 @@ const settings = async input => {
   return settingsTransformer(db.settings);
 };
 
-module.exports = { history, settings };
+module.exports = { history, settings, changeSet, getStateAtHash };

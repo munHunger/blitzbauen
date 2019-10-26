@@ -3,7 +3,7 @@
   import RouterView from "@spaceavocado/svelte-router/component/view";
 
   import ApolloClient from "apollo-boost";
-  import { client } from "./data";
+  import { client } from "../data";
   import { setClient } from "svelte-apollo";
   import Navbar from "./menu/Navbar.svelte";
   import Header from "./header/Header.svelte";

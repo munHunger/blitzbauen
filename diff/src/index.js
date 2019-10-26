@@ -1,6 +1,6 @@
 function diff(a, b, acc) {
   if (!acc) return diff(a, b, {});
-  if (Object.keys(a).length == 0 && Object.keys(b) == 0) return acc;
+  if (Object.keys(a).length == 0 && Object.keys(b).length == 0) return acc;
   let aKeys = Object.keys(a);
   let bKeys = Object.keys(b);
 

@@ -19,9 +19,11 @@ function pollGit() {
       repo.hash = hash;
       logger.debug(`listed remote ${repo.name} latest hash ${hash}`);
       let latest = (
-        Object.keys(db.history)
+        Object.keys(db.history || {})
           .filter(key => typeof db.history[key] !== "function")
           .map(key => db.history[key])
+          .filter(job => job.latest) // Ignore objects not under VC
+          .map(job => job.latest)
           .sort((a, b) => b.timestamp - a.timestamp)
           .find(job => job.name === repo.name) || {}
       ).hash;

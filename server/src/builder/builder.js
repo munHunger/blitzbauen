@@ -4,7 +4,6 @@ const simplegit = require("simple-git");
 const exec = require("child_process").exec;
 const outputParser = require("./outputParser");
 const logger = require("../logger").logger("build engine");
-
 let db;
 let dbConnect = datason.connect("./data").then(d => (db = d));
 
@@ -134,7 +133,15 @@ function runStepsInProgression(steps, onChange) {
               val,
               o => {
                 out += o;
-                if (onChange) onChange.apply(this, [out, err, buildHistory]);
+                if (onChange)
+                  onChange.apply(this, [
+                    out,
+                    err,
+                    {
+                      ...buildHistory,
+                      details: buildHistory.details.concat({ output: out })
+                    }
+                  ]);
               },
               e => {
                 err += e;

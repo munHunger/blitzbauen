@@ -1,5 +1,5 @@
 <script>
-  import { addListener } from "../data";
+  import { addListener } from "../../data";
   let alerts = [];
 
   addListener(data => {

@@ -52,10 +52,50 @@ export const JOB_STARTED_SUBSCRIPTION = gql`
 
 export const JOB_COMPLETED_SUBSCRIPTION = gql`
   subscription {
-    onJobStarted {
+    onJobComplete {
       id
       name
       status
+    }
+  }
+`;
+
+export const JOB_CHANGE_REQUEST = gql`
+  query ChangeSet($id: String, $hash: String) {
+    changeSet(id: $id, hash: $hash) {
+      hash
+      change
+      base {
+        id
+        timestamp(format: "yyyy-mm-dd HH:MM:ss")
+        name
+        status
+        details {
+          step
+          output
+          status
+          time
+          test {
+            tests
+            failures
+            errors
+            disabled
+            suite {
+              name
+              class
+              failure
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const JOB_UPDATED_SUBSCRIPTION = gql`
+  subscription {
+    onJobUpdated {
+      id
     }
   }
 `;

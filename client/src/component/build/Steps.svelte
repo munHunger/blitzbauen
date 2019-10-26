@@ -2,13 +2,17 @@
   import Test from "./output/Test.svelte";
   import StatusItem from "./StatusItem.svelte";
   import { getClient, query } from "svelte-apollo";
-  import { client, JOBDETAIL } from "../data";
+  import { client, JOBDETAIL } from "../../data";
 
   let stepName;
   export let jobId;
   export let onSelect;
+  export let details;
 
-  $: steps = client.request({ query: JOBDETAIL, variables: { id: jobId } });
+  if (!details)
+    client
+      .request({ query: JOBDETAIL, variables: { id: jobId } })
+      .subscribe(data => (details = data.history[0].details));
 </script>
 
 <style>
@@ -31,11 +35,13 @@
   }
 </style>
 
-{#await $steps}
+{#if !details}
   Loading...
-{:then result}
-  {#if result}
-    {#each result.data.history[0].details as step}
+{:else}
+  {#each details as step}
+    {#if !step}
+      Step is somehow null :(
+    {:else}
       <div style="padding:0px">
         <div class="text">
           <span class="mui--text-light">{step.step}</span>
@@ -47,11 +53,13 @@
           </span>
         </div>
         <div class="output">
-          {#each step.output.split('\n') as paragraph}
-            <div>{paragraph}</div>
-          {/each}
+          {#if step.output}
+            {#each step.output.split('\n') as paragraph}
+              <div>{paragraph}</div>
+            {/each}
+          {/if}
         </div>
       </div>
-    {/each}
-  {/if}
-{/await}
+    {/if}
+  {/each}
+{/if}

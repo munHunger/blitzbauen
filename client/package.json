@@ -15,7 +15,8 @@
     "apollo-boost": "0.4.3",
     "graphql": "^14.4.2",
     "apollo-link-ws": "1.0.18",
-    "svelte-observable": "0.4.0"
+    "svelte-observable": "0.4.0",
+    "blitzdiff": "file:../diff"
   },
   "dependencies": {
     "sirv-cli": "^0.4.4",

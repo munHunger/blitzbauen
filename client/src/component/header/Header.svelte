@@ -1,6 +1,6 @@
 <script>
   import { router } from "@spaceavocado/svelte-router";
-  import { addListener } from "../data";
+  import { addListener } from "../../data";
 
   addListener(_ => {
     alerts += 1;
