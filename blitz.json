@@ -1,4 +1,23 @@
 {
+  "deployment": {
+    "targets": [
+      {
+        "name": "localhost",
+        "ip": "127.0.0.1",
+        "artifacts": [
+          {
+            "requirement": ["linux", "server"],
+            "path": "/opt/blitzbauen"
+          },
+          {
+            "requirement": ["client"],
+            "path": "/opt/blitzbauen/"
+          }
+        ],
+        "script": "systemctl blitzbauen restart"
+      }
+    ]
+  },
   "steps": [
     {
       "name": "install dependencies",
@@ -61,12 +80,44 @@
       }
     },
     {
+      "name": "package",
+      "script": "cd server && npm run package",
+      "output": {
+        "artifact": {
+          "binaries": [
+            {
+              "path": "server/bin/server-linux",
+              "tags": ["linux", "server"]
+            },
+            {
+              "path": "server/bin/server-macos",
+              "tags": ["macos", "server"]
+            },
+            {
+              "path": "server/bin/server-win.exe",
+              "tags": ["windows", "server"]
+            }
+          ]
+        }
+      }
+    },
+    {
       "name": "install dependencies",
       "script": "cd client && npm install"
     },
     {
       "name": "build",
-      "script": "cd client && npm run build"
+      "script": "cd client && npm run build",
+      "output": {
+        "artifact": {
+          "binaries": [
+            {
+              "path": "client/public",
+              "tags": ["client"]
+            }
+          ]
+        }
+      }
     }
   ]
 }

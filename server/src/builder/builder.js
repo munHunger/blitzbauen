@@ -34,7 +34,7 @@ function readSettings(repo) {
  * @param {Object} repo The repository to build
  * @param {String} repo.name the name of the repository, and the name of the folder to clone into
  * @param {String} repo.url the url to the git repo to clone
- * @returns {Promise<Object>} The parsed blitz file if the repo was a blitz project and with the hash added to it. reject otherwise
+ * @returns {Promise<Object>} The parsed blitz file if the repo was a blitz project and with the hash, message, and author added to it. reject otherwise
  */
 function cloneRepo(repo) {
   logger.info(`cloning repo in ${process.cwd()}/repos/`, { data: repo });
@@ -48,17 +48,19 @@ function cloneRepo(repo) {
         git.cwd(`repos/${repo.name}`).log((err, log) => {
           let hash = log.latest.hash;
           logger.debug(`attached hash ${hash} to repo ${repo.name}`, {
-            data: {
-              message: log.latest.message,
-              date: log.latest.date
-            }
+            data: log.latest
           });
           if (fs.existsSync(`repos/${repo.name}/blitz.json`))
             resolve(
               fs.promises
                 .readFile(`repos/${repo.name}/blitz.json`)
                 .then(data => {
-                  return { ...JSON.parse(data), hash };
+                  return {
+                    ...JSON.parse(data),
+                    hash,
+                    message: log.latest.message,
+                    author: log.latest.author_name
+                  };
                 })
             );
           else reject("Not a blitz project");

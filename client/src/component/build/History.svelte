@@ -78,12 +78,8 @@
   .build {
     position: relative;
     height: 100%;
-    display: flex;
+    display: block;
     background-color: rgb(250, 250, 250);
-  }
-
-  .steps {
-    background-color: rgb(45, 47, 49);
   }
 </style>
 
@@ -91,7 +87,7 @@
   Loading...
 {:else}
   {#each builds as job}
-    <div class="mui-container-fluid" style="padding: 0px">
+    <div class="mui-container-fluid" style="padding: 0px; width:80%">
       <div class="mui-row" style="padding: 0px">
         <div class="build mui-col-md-12" style="padding: 0px">
           <div class="mui-col-md-3" style="padding: 0px">
@@ -105,9 +101,9 @@
                 if (onSelect) onSelect(job.id);
               }} />
           </div>
-          <div class="steps mui-col-md-9" style="padding:0px">
+          <div class="mui-col-md-12" style="padding:0px">
             {#if id && id === job.id}
-              <Steps jobId={id} details={job.details} />
+              <Steps jobId={id} details={job} />
             {/if}
           </div>
         </div>

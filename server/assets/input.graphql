@@ -1,0 +1,40 @@
+input HistoryFilter {
+  id: StringFilter
+  name: StringFilter
+  status: NumberFilter
+  details: HistoryDetailsFilter
+}
+
+input HistoryDetailsFilter {
+  step: StringFilter
+  output: StringFilter
+  status: NumberFilter
+}
+
+input NumberFilter {
+  eq: Int
+  lt: Int
+  gt: Int
+  in: [Int]
+}
+
+input StringFilter {
+  eq: String
+  contains: String
+  in: [String]
+}
+
+input Sort {
+  field: String
+  asc: Boolean
+}
+
+input SettingsInput {
+  repositories: [RepositoryInput]
+}
+
+input RepositoryInput {
+  id: String
+  name: String
+  url: String
+}

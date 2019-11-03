@@ -2,6 +2,7 @@ test/
 server/data/
 server/repos/
 server/history/
+server/bin
 client/public/bundle.*
 .vscode/
 # Logs

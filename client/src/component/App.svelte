@@ -8,7 +8,7 @@
   import Navbar from "./menu/Navbar.svelte";
   import Header from "./header/Header.svelte";
   import Settings from "./settings/Settings.svelte";
-  import Build from "./build/Build.svelte";
+  import History from "./build/History.svelte";
   import Alert from "./alert/Alert.svelte";
   setClient(client);
 
@@ -22,11 +22,11 @@
       {
         path: "/build",
         name: "build",
-        component: Build
+        component: History
       },
       {
         path: "*",
-        component: Build
+        component: History
       }
     ]
   });

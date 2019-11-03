@@ -7,7 +7,7 @@ const { typeDefs } = require("./schema");
 const http = require("http");
 const logger = require("./logger").logger("server");
 
-//startFrontend(5000);
+startFrontend(5002);
 startBackend(5001);
 
 /**

@@ -70,6 +70,11 @@ export const JOB_CHANGE_REQUEST = gql`
         timestamp(format: "yyyy-mm-dd HH:MM:ss")
         name
         status
+        commit {
+          hash
+          author
+          message
+        }
         details {
           step
           output
@@ -144,6 +149,11 @@ export const TRIGGER_BUILD = gql`
 export const JOBDETAIL = gql`
   query History($id: String!) {
     history(filter: { id: { eq: $id } }) {
+      commit {
+        hash
+        author
+        message
+      }
       details {
         step
         status

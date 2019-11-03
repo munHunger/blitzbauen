@@ -1,0 +1,59 @@
+type JobUpdate {
+  hash: String # the latest hash
+  change: String # Blitzdiff change
+  base: History # Optional base set
+}
+
+type Repository {
+  id: String
+  name: String
+  url: String
+}
+
+type HistoryDiff {
+  added: History
+  updated: History
+  deleted: History
+  appended: History
+}
+
+type History {
+  id: String
+  timestamp(format: String): String
+  name: String
+  commit: Commit
+  status: Int
+  details: [HistoryDetails]
+}
+
+type Commit {
+  hash: String
+  message: String
+  author: String
+}
+
+type HistoryDetails {
+  step: String
+  output: String
+  status: Int
+  time: Int
+  test: [TestSuite]
+}
+
+type TestSuite {
+  tests: Int
+  failures: Int
+  errors: Int
+  disabled: Int
+  suite: [Test]
+}
+
+type Test {
+  name: String
+  class: String
+  failure: String
+}
+
+type Settings {
+  repositories: [Repository]
+}

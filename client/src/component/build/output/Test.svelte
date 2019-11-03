@@ -1,5 +1,7 @@
 <script>
   export let test;
+  export let failureColor = "red";
+  export let successColor = "rgb(33, 214, 88)";
 </script>
 
 <style>
@@ -19,7 +21,7 @@
     display: inline;
     margin: 5px;
   }
-  .failure {
+  .info {
     position: absolute;
     top: 45px;
     left: 50%;
@@ -30,8 +32,10 @@
     padding: 10px;
     border-radius: 5px;
     color: antiquewhite;
+    min-width: 150px;
+    text-align: center;
   }
-  .failure::before {
+  .info::before {
     background-color: rgba(9, 17, 17);
     content: " ";
     width: 20px;
@@ -47,14 +51,14 @@
   {#each test.suite as testcase}
     <div
       class="test"
-      style="background-color: {testcase.failure ? 'red' : 'rgb(33, 214, 88)'}"
+      style="background-color: {testcase.failure ? failureColor : successColor}"
       on:mouseenter={() => (testcase.mouseover = true)}
       on:mouseleave={() => (testcase.mouseover = false)}>
-      <div
-        class="failure"
-        style="opacity: {testcase.mouseover && testcase.failure ? '1' : '0'}">
+      <div class="info" style="opacity: {testcase.mouseover ? '1' : '0'}">
         <div class="name">{testcase.class}:{testcase.name}</div>
-        <div class="error">{testcase.failure}</div>
+        {#if testcase.failure}
+          <div class="error">{testcase.failure}</div>
+        {/if}
       </div>
     </div>
   {/each}

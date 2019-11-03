@@ -9,10 +9,17 @@
   export let onSelect;
   export let details;
 
-  if (!details)
+  if (!(details || {}).details)
     client
       .request({ query: JOBDETAIL, variables: { id: jobId } })
-      .subscribe(data => (details = data.data.history[0].details));
+      .subscribe(data => {
+        details = data.data.history[0];
+      });
+
+  const getTestCount = step =>
+    step.test.map(suite => suite.tests).reduce((acc, val) => acc + val, 0);
+  const getFailureCount = step =>
+    step.test.map(suite => suite.failures).reduce((acc, val) => acc + val, 0);
 </script>
 
 <style>
@@ -33,33 +40,77 @@
     font-family: "Roboto Mono", monospace;
     margin: 5px;
   }
+  .step {
+    background-color: rgb(45, 47, 49);
+  }
+
+  .pretty {
+    font-family: "Roboto Mono", monospace;
+    font-size: 16px;
+    padding-left: 40px;
+  }
+
+  .pretty .detail {
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 13px;
+  }
 </style>
 
 {#if !details}
   Loading...
 {:else}
-  {#each details as step}
-    {#if !step}
-      Step is somehow null :(
-    {:else}
-      <div style="padding:0px">
-        <div class="text">
-          <span class="mui--text-light">{step.step}</span>
-          {#each step.test || [] as test}
-            <Test {test} />
-          {/each}
-          <span class="mui--text-light-secondary" style="float:right">
-            {step.time}
-          </span>
-        </div>
-        <div class="output">
-          {#if step.output}
-            {#each step.output.split('\n') as paragraph}
-              <div>{paragraph}</div>
-            {/each}
-          {/if}
+  {#if details.commit}
+    <div class="mui-row">
+      <div class="pretty mui-col-md-3">
+        <div>{details.commit.message}</div>
+        <div class="detail">
+          <b>by</b>
+          {details.commit.author}
         </div>
       </div>
-    {/if}
-  {/each}
+      <div class="step mui-col-md-9" style="padding:0px" />
+    </div>
+  {/if}
+  {#if details.details}
+    {#each details.details as step}
+      {#if !step}
+        Step is somehow null :(
+      {:else}
+        <div class="mui-row">
+          <div class="pretty mui-col-md-3">
+            {#if step.test}
+              {getTestCount(step) - getFailureCount(step)} out of {getTestCount(step)}
+              tests passed
+              <div>
+                {#each step.test || [] as test}
+                  <Test
+                    {test}
+                    successColor="rgba(0,0,0,0.1)"
+                    failureColor="rgba(0,0,0,0.5)" />
+                {/each}
+              </div>
+            {/if}
+          </div>
+          <div class="step mui-col-md-9" style="padding:0px">
+            <div class="text">
+              <span class="mui--text-light">{step.step}</span>
+              {#each step.test || [] as test}
+                <Test {test} />
+              {/each}
+              <span class="mui--text-light-secondary" style="float:right">
+                {step.time}
+              </span>
+            </div>
+            <div class="output">
+              {#if step.output}
+                {#each step.output.split('\n') as paragraph}
+                  <div>{paragraph}</div>
+                {/each}
+              {/if}
+            </div>
+          </div>
+        </div>
+      {/if}
+    {/each}
+  {/if}
 {/if}

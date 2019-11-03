@@ -47,7 +47,8 @@ function build(repoName) {
         .toString(36)
         .substring(8),
       status: -1,
-      details: []
+      details: [],
+      commit: {}
     });
     db.history.register(history.latest.id, history);
     pubsub.publish(subscriptionTopics.jobStarted, {
@@ -62,6 +63,9 @@ function build(repoName) {
     deleteFolderRecursive(`./repos/${repo.name}`);
     return builder.cloneRepo(repo).then(blitz => {
       history.commit(l => {
+        l.commit.hash = blitz.hash;
+        l.commit.author = blitz.author;
+        l.commit.message = blitz.message;
         l.hash = blitz.hash;
         return l;
       });
