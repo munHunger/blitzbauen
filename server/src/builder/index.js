@@ -1,15 +1,15 @@
 const fs = require("fs");
 const { pubsub, subscriptionTopics } = require("../subscriptions");
 let { db, init } = require("../db");
-const cloneDeep = require("clone-deep");
 
 init.then(db => {
   if (!db.history) db.createTable("history");
 });
 const builder = require("./builder");
 const logger = require("../logger").logger("builder");
-const blitzdiff = require("blitzdiff");
 const vc = require("blitz-vc");
+
+const { deploy } = require("./deploy");
 
 /**
  * Recursively delete everything synchronously in the path, including the path
@@ -100,6 +100,8 @@ function build(repoName) {
               id: history.latest.id
             }
           });
+
+          deploy(repo);
 
           pubsub.publish(subscriptionTopics.jobComplete, {
             onJobComplete: history.latest

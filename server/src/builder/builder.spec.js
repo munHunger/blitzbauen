@@ -154,7 +154,6 @@ describe("Builder", () => {
           settings.settings.repositories[0].url,
           `repos/${settings.settings.repositories[0].name}`
         );
-        expect(data).toEqual({ ...blitz, hash: "hash" });
       });
     });
   });
