@@ -95,7 +95,7 @@ function runStep(step, outCallback, errCallback) {
       });
       process.on("exit", code => {
         logger.debug(`Exited step ${step.name} with code ${code}`);
-        (step.output
+        ((step.output || {}).reports
           ? outputParser.parseOutput(`repos/${step.repo.name}`, step.output)
           : Promise.resolve()
         ).then(outputData => {

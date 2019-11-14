@@ -101,7 +101,7 @@ function build(repoName) {
             }
           });
 
-          deploy(repo);
+          deploy(blitz);
 
           pubsub.publish(subscriptionTopics.jobComplete, {
             onJobComplete: history.latest
